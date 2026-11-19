@@ -27,9 +27,9 @@ it('gives every key the manifest schema requires, and only keys it knows', funct
 
     expect(array_diff($schema['required'], array_keys($manifest)))->toBe([])
         ->and(array_diff(array_keys($manifest), array_keys($schema['properties'])))->toBe([])
-        ->and($manifest['code'])->toMatch('/'.$schema['properties']['code']['pattern'].'/')
-        ->and($manifest['name'])->toMatch('/'.$schema['properties']['name']['pattern'].'/')
-        ->and($manifest['version'])->toMatch('/'.$schema['properties']['version']['pattern'].'/')
+        ->and($manifest['code'])->toMatch('~'.$schema['properties']['code']['pattern'].'~')
+        ->and($manifest['name'])->toMatch('~'.$schema['properties']['name']['pattern'].'~')
+        ->and($manifest['version'])->toMatch('~'.$schema['properties']['version']['pattern'].'~')
         ->and($manifest['contributes']['types'])->toBe('types/teme-types.json');
 });
 
@@ -95,7 +95,7 @@ it('opens every PHP file with the plugin’s file header', function (): void {
     $files = [...glob(temecmsSiteRoot().'/src/*.php'), ...glob(temecmsSiteRoot().'/seed/*.php'), ...glob(temecmsSiteRoot().'/tests/*.php')];
 
     foreach ($files as $file) {
-        $head = (string) file_get_contents($file, length: 1500);
+        $head = (string) file_get_contents($file, length: 4000);
 
         expect($head)->toStartWith("<?php\n\n/**")
             ->toContain('@package TemecmsSite')

@@ -25,6 +25,7 @@
  */
 
 declare(strict_types=1);
+use Illuminate\Contracts\Console\Kernel;
 
 $stop = static function (string $line): never {
     fwrite(STDERR, $line."\n");
@@ -42,7 +43,7 @@ if (is_file($teme.'/bootstrap/extensions.php')) {
     require $teme.'/bootstrap/extensions.php';
 }
 $app = require $teme.'/bootstrap/app.php';
-$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$app->make(Kernel::class)->bootstrap();
 
 require_once __DIR__.'/steps.php';
 

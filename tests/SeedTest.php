@@ -20,7 +20,9 @@ use App\Domain\Contents\Operations\SaveDraft;
 use App\Domain\Media\Models\Media;
 use App\Domain\Menus\Models\Navigation;
 use App\Domain\Menus\Models\NavigationItem;
+use App\Domain\Types\ContentTypeRegistry;
 use App\Domain\Updates\TemeVersion;
+use Illuminate\Support\Facades\Process;
 use Teme\Contracts\Settings\SettingsReader;
 use Teme\Testing\Acting;
 use Teme\Testing\TemeTestCase;
@@ -135,5 +137,17 @@ it('takes over the types the old theme seed made, keeping their items', function
     $this->plugin(temecmsSiteRoot())->enable($this->admin);
 
     expect($this->fetch($guide->url)->status())->toBe(200)
-        ->and(app(\App\Domain\Types\ContentTypeRegistry::class)->get('plugin')->plural)->toBe('Plugin directory');
+        ->and(app(ContentTypeRegistry::class)->get('plugin')->plural)->toBe('Plugin directory');
 })->skip(fn (): bool => ! temecmsSiteSocket(), 'needs the plugin types socket (Teme 1.2), which reads contributes.types');
+
+it('runs as a script from the Teme install’s folder, and exits non-zero with the reason it stopped', function (): void {
+    $script = temecmsSiteRoot().'/seed/seed.php';
+
+    $elsewhere = Process::path(sys_get_temp_dir())->run([PHP_BINARY, $script, 'media']);
+    $unknown = Process::path(base_path())->run([PHP_BINARY, $script, 'types', 'media']);
+
+    expect($elsewhere->exitCode())->toBe(1)
+        ->and($elsewhere->errorOutput())->toContain("Run the seed from the Teme install's folder")
+        ->and($unknown->exitCode())->toBe(1)
+        ->and($unknown->errorOutput())->toContain('Name the steps to run, from: media theme content regions menus settings addresses activate. Unknown: types.');
+});
