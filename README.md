@@ -160,16 +160,16 @@ temecms.com already has the types `doc`, `plugin` and `theme`, made by the TemeC
 
    Check: the theme names 0.2.0 and is still the active theme. The documentation pages show a version label: the running release (1.2.0) when the theme's Documentation version label setting is empty, or what that setting says. If you set it to 0.7 once, clear it under Site › Themes. The home page, a blog post and the plugin and theme directories look as they did.
 
-4. **Bring the old words up to date.** The seed has changed since the pages were written: they still call Teme an alpha, say Version 1.0 and installing from the admin are still to come The `words` step rewrites those passages, and nothing else, through Teme's Operations. From the web container, as in the steps above:
+4. **Bring the old words up to date.** The seed has changed since the pages were written: they still call Teme an alpha, say Version 1.0 and installing from the admin are still to come, and list guides with "Its page is not drawn yet." The `words` step rewrites those passages, and nothing else, through Teme's Operations. From the web container, as in the steps above:
 
    ```bash
    cd /var/www/html
    SEED_ADMIN_ID=1 php /var/teme/extensions/current/vendor/temecms/temecms-site/seed/seed.php words
    ```
 
-   It changes a passage only where the item still holds the older seed's text exactly. A passage someone has edited, and an item with a draft waiting, are left as they are and named, so a person's edit is never written over. It lists each item it changed and each passage it left, and ends with what it changed, such as "Made or changed: words 14." Run again, it changes nothing: a passage already as it is now is passed over, and it ends with "Nothing to change".
+   It changes a passage only where the item still holds the older seed's text exactly. A passage someone has edited, and an item with a draft waiting, are left as they are and named, so a person's edit is never written over. It lists each item it changed and each passage it left, and ends with what it changed, such as "Made or changed: words 55." Run again, it changes nothing: a passage already as it is now is passed over, and it ends with "Nothing to change". Each guide the docs home lists that isn't written yet now says "This guide is being written." and carries no proof mark; its page, address and place in the menus are as they were.
 
-   Check: `/faq/` answers "Can I use it now?" with Yes, `/roadmap/` lists Teme 1.2 as built and the directory as next, and `/moving-from-wordpress/` no longer says alpha.
+   Check: `/faq/` answers "Can I use it now?" with Yes, `/roadmap/` lists Teme 1.2 as built and the directory as next, `/moving-from-wordpress/`, `/plugins/` and `/theme-directory/` no longer say alpha or planned for what exists, and a guide such as `/docs/configuring-teme/` says "This guide is being written."
 
 Don't run any other step on this site. If you ever do, name only the steps you need: published items, regions and menus are left alone unless named in `SEED_FORCE`.
 

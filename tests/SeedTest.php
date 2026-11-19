@@ -188,6 +188,10 @@ function temecmsSiteAge(object $test): void
             $revision = $item->publishedRevision;
             $document = $revision->document;
             $fields = (array) $revision->fields;
+            $keys = [];
+            foreach (app(FieldRegistry::class)->forType($w['type']) as $field) {
+                $keys[$field->handle] = $field->key;
+            }
             foreach ($w['replace'] as $r) {
                 $now = str_replace('{{release}}', TemeVersion::current(), temecms_site_plain_text($r['new']));
                 foreach ($document['content'] as $i => $block) {
@@ -197,6 +201,9 @@ function temecmsSiteAge(object $test): void
                         break;
                     }
                 }
+            }
+            foreach ($w['fields'] ?? [] as $handle => [$was]) {
+                $fields[$keys[$handle]] = $was;
             }
             app(SaveDraft::class)->execute(new SaveDraftInput($item->id, (string) $revision->title, $document, $fields, (string) $item->working_revision_id, $aid, (array) $revision->terms));
             $item->refresh();
@@ -232,7 +239,8 @@ it('says nothing is out of date in the seed,', function (): void {
     unset($content['posts']); // the 0.7.0-alpha.1 notes are history, and say so
     $text = json_encode($content, JSON_UNESCAPED_UNICODE);
 
-    expect($text)->not->toMatch('/alpha|0\.7|Not yet\. Teme/i');
+    expect($text)->not->toMatch('/alpha|0\.7|not drawn yet|Not written yet|Not yet\. Teme/i')
+        ->and($text)->toContain('This guide is being written.');
 });
 
 it('brings the older seed’s words up to date, once, and changes nothing the second time', function (): void {
@@ -242,8 +250,12 @@ it('brings the older seed’s words up to date, once, and changes nothing the se
     $state = json_decode((string) file_get_contents($this->state), true);
     temecmsSiteAge($this);
     $page = static fn (string $key): Content => Content::query()->findOrFail(json_decode((string) file_get_contents(test()->state), true)['content']['page:'.$key]);
+    $stub = Content::query()->where('type', 'doc')->where('slug', 'configuring-teme')->firstOrFail();
+    $proof = collect(app(FieldRegistry::class)->forType('doc'))->firstWhere('handle', 'proof')->key;
 
-    expect(temecmsSiteBody($page('faq')))->toContain('Teme is in alpha');
+    expect(temecmsSiteBody($page('faq')))->toContain('Teme is in alpha')
+        ->and(temecmsSiteBody($stub))->toContain('Its page is not drawn yet.')
+        ->and((string) $stub->fresh()->publishedRevision->fields[$proof])->toBe('tests');
 
     $says = [];
     $made = temecms_site_seed(['words'], $this->admin->id, $this->state, [], function (string $line) use (&$says): void {
@@ -255,6 +267,8 @@ it('brings the older seed’s words up to date, once, and changes nothing the se
         ->not->toContain('alpha')->not->toContain('{{release}}')
         ->and(temecmsSiteBody($page('roadmap')))->toContain('Teme 1.2')->toContain('The directory')->not->toContain('alpha')->not->toContain('Installing and listing')
         ->and(temecmsSiteBody($page('migration')))->not->toContain('alpha')
+        ->and(temecmsSiteBody($stub))->toContain('This guide is being written.')->not->toContain('not drawn yet')
+        ->and((string) $stub->fresh()->publishedRevision->fields[$proof])->toBe('')
         ->and(array_filter($says, static fn (string $line): bool => str_contains($line, 'left as')))->toBe([]);
 
     expect(temecms_site_seed(['words'], $this->admin->id, $this->state))->toBe([])

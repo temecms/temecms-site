@@ -693,6 +693,819 @@
    ]
   },
   {
+   "ref": "doc:your-account-and-notifications",
+   "type": "doc",
+   "slug": "your-account-and-notifications",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:writing-formatting-images-and-cards",
+   "type": "doc",
+   "slug": "writing-formatting-images-and-cards",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:saving-review-scheduling-and-publishing",
+   "type": "doc",
+   "slug": "saving-review-scheduling-and-publishing",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:revisions-and-preview",
+   "type": "doc",
+   "slug": "revisions-and-preview",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-lists-find-edit-trash-and-bring-back",
+   "type": "doc",
+   "slug": "the-lists-find-edit-trash-and-bring-back",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:media",
+   "type": "doc",
+   "slug": "media",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:categories-tags-menus-and-regions",
+   "type": "doc",
+   "slug": "categories-tags-menus-and-regions",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:comments",
+   "type": "doc",
+   "slug": "comments",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:redirects",
+   "type": "doc",
+   "slug": "redirects",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:settings",
+   "type": "doc",
+   "slug": "settings",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-page-cache",
+   "type": "doc",
+   "slug": "the-page-cache",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-banners-at-the-top-of-the-admin",
+   "type": "doc",
+   "slug": "the-banners-at-the-top-of-the-admin",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:are-the-backups-safe",
+   "type": "doc",
+   "slug": "are-the-backups-safe",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:importing-another-site",
+   "type": "doc",
+   "slug": "importing-another-site",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:themes-and-plugins",
+   "type": "doc",
+   "slug": "themes-and-plugins",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:configuring-teme",
+   "type": "doc",
+   "slug": "configuring-teme",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "tests",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:the-database",
+   "type": "doc",
+   "slug": "the-database",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "tests",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:sizing-a-server",
+   "type": "doc",
+   "slug": "sizing-a-server",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:cloudflare-in-front-of-teme",
+   "type": "doc",
+   "slug": "cloudflare-in-front-of-teme",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:running-teme-on-dokploy",
+   "type": "doc",
+   "slug": "running-teme-on-dokploy",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "dokploy",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:running-teme-on-coolify",
+   "type": "doc",
+   "slug": "running-teme-on-coolify",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:running-teme-on-a-plain-vps",
+   "type": "doc",
+   "slug": "running-teme-on-a-plain-vps",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:backups",
+   "type": "doc",
+   "slug": "backups",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "tests",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:updating-and-rolling-back",
+   "type": "doc",
+   "slug": "updating-and-rolling-back",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:restoring-moving-and-exporting",
+   "type": "doc",
+   "slug": "restoring-moving-and-exporting",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:troubleshooting",
+   "type": "doc",
+   "slug": "troubleshooting",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "tests",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:the-migration-runbook",
+   "type": "doc",
+   "slug": "the-migration-runbook",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ],
+   "fields": {
+    "proof": [
+     "none",
+     ""
+    ]
+   }
+  },
+  {
+   "ref": "doc:theme-reference",
+   "type": "doc",
+   "slug": "theme-reference",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:theme-view-data",
+   "type": "doc",
+   "slug": "theme-view-data",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:settings-reference",
+   "type": "doc",
+   "slug": "settings-reference",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:fields-reference",
+   "type": "doc",
+   "slug": "fields-reference",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:cards-reference",
+   "type": "doc",
+   "slug": "cards-reference",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:export-format-reference",
+   "type": "doc",
+   "slug": "export-format-reference",
+   "replace": [
+    {
+     "old": "This guide is written in the repository. Its page is not drawn yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-developers-guide",
+   "type": "doc",
+   "slug": "the-developers-guide",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-plugin-handbook",
+   "type": "doc",
+   "slug": "the-plugin-handbook",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-theme-handbook",
+   "type": "doc",
+   "slug": "the-theme-handbook",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:hook-reference",
+   "type": "doc",
+   "slug": "hook-reference",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:read-api-reference",
+   "type": "doc",
+   "slug": "read-api-reference",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "ref": "doc:the-component-kit",
+   "type": "doc",
+   "slug": "the-component-kit",
+   "replace": [
+    {
+     "old": "Not written yet.",
+     "new": {
+      "type": "paragraph",
+      "content": [
+       {
+        "type": "text",
+        "text": "This guide is being written."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
    "ref": "plugin:review-notifier",
    "type": "plugin",
    "slug": "review-notifier",

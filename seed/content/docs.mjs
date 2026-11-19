@@ -4,7 +4,6 @@ import { a, b, c, p, h2, h3, ul, ol, callout, snippet, table } from '../lib.mjs'
 const olFrom = (start, ...items) => { const l = ol(...items); l.attrs.start = start; return l; };
 
 const kebab = (t) => t.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-const PROOF = { 'Checked by CI': 'ci', 'Checked by tests': 'tests', 'Run on Dokploy': 'dokploy', 'Not yet proved': 'none' };
 
 // ---------- the three written guides ----------
 const install = {
@@ -219,17 +218,16 @@ const proxies = {
 const written = { 'editors/Getting started/Signing in and two-factor sign-in': signingIn, 'operators/Install/Installing with the Compose recipe': install, 'operators/HTTPS and platforms/Proxies and HTTPS': proxies };
 
 // ---------- every guide the drawing lists ----------
-// [title, kind]: 'link' = drawn as a link (written in the repository), 'soon' = tagged Soon in the drawing; proof: a label or '' (no mark).
-const LINKED = 'This guide is written in the repository. Its page is not drawn yet.';
-const SOON = 'Not written yet.';
+// [title, kind]: a guide the docs home lists. Until its guide is written, its page says so in one line and carries no proof mark.
+const BEING_WRITTEN = 'This guide is being written.';
 const LIST = [
     ['editors', 'Getting started', [['Signing in and two-factor sign-in', 'link'], ['Your account and notifications', 'link']]],
     ['editors', 'Writing and publishing', [['Writing: formatting, images and cards', 'link'], ['Saving, review, scheduling and publishing', 'link'], ['Revisions and preview', 'link']]],
     ['editors', 'Looking after the site', [['The lists: find, edit, trash and bring back', 'link'], ['Media', 'link'], ['Categories, tags, menus and regions', 'link'], ['Comments', 'link'], ['Redirects', 'link'], ['Settings', 'link'], ['The page cache', 'link'], ['The banners at the top of the admin', 'link'], ['Are the backups safe?', 'link']]],
     ['editors', 'Coming to this guide', [['Importing another site', 'soon'], ['Themes and plugins', 'soon']]],
-    ['operators', 'Install', [['Installing with the Compose recipe', 'link', 'Checked by CI'], ['Configuring Teme', 'link', 'Checked by tests'], ['The database', 'link', 'Checked by tests'], ['Sizing a server', 'link', 'Not yet proved']]],
-    ['operators', 'HTTPS and platforms', [['Proxies and HTTPS', 'link', 'Checked by tests'], ['Cloudflare in front of Teme', 'link', 'Not yet proved'], ['Running Teme on Dokploy', 'link', 'Run on Dokploy'], ['Running Teme on Coolify', 'link', 'Not yet proved'], ['Running Teme on a plain VPS', 'link', 'Not yet proved']]],
-    ['operators', 'Keep it safe and current', [['Backups', 'link', 'Checked by tests'], ['Updating and rolling back', 'link', 'Not yet proved'], ['Restoring, moving and exporting', 'link', 'Not yet proved'], ['Troubleshooting', 'link', 'Checked by tests'], ['The migration runbook', 'link', 'Not yet proved']]],
+    ['operators', 'Install', [['Installing with the Compose recipe', 'link'], ['Configuring Teme', 'link'], ['The database', 'link'], ['Sizing a server', 'link']]],
+    ['operators', 'HTTPS and platforms', [['Proxies and HTTPS', 'link'], ['Cloudflare in front of Teme', 'link'], ['Running Teme on Dokploy', 'link'], ['Running Teme on Coolify', 'link'], ['Running Teme on a plain VPS', 'link']]],
+    ['operators', 'Keep it safe and current', [['Backups', 'link'], ['Updating and rolling back', 'link'], ['Restoring, moving and exporting', 'link'], ['Troubleshooting', 'link'], ['The migration runbook', 'link']]],
     ['developers', 'References, generated from the code', [['Theme reference', 'link'], ['Theme view data', 'link'], ['Settings reference', 'link'], ['Fields reference', 'link'], ['Cards reference', 'link'], ['Export format reference', 'link']]],
     ['developers', 'Guides', [["The developers' guide", 'soon'], ['The plugin handbook', 'soon'], ['The theme handbook', 'soon']]],
     ['developers', 'More references', [['Hook reference', 'soon'], ['Read API reference', 'soon'], ['The component kit', 'soon']]],
@@ -246,8 +244,8 @@ for (const [guide, group, entries] of LIST) {
             title,
             slug: kebab(title),
             excerpt: '',
-            fields: { guide, group, proof: proofLabel ? PROOF[proofLabel] : '', order: idx + 1, soon: true, written_for: '' },
-            body: { type: 'doc', content: [p(kind === 'soon' ? SOON : LINKED)] },
+            fields: { guide, group, proof: '', order: idx + 1, soon: true, written_for: '' },
+            body: { type: 'doc', content: [p(BEING_WRITTEN)] },
         });
     });
 }
