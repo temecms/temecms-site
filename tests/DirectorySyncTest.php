@@ -15,6 +15,7 @@ declare(strict_types=1);
 use App\Domain\Plugins\Seams\PluginServices;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Teme\Contracts\Content\ContentReader;
 use Teme\Contracts\Content\ContentWriter;
@@ -56,6 +57,18 @@ beforeEach(function (): void {
     $this->reader = $doors[ContentReader::class];
     $this->sync = new DirectorySync($doors[ContentReader::class], $doors[ContentWriter::class], $doors[MediaWriter::class], new ReadmeToDocument(temecmsSiteHtmlToDocument()));
     $this->run = fn (array $packages): SyncReport => (new Acting)->as($this->admin, fn (): SyncReport => $this->sync->run($packages, (string) $this->admin->id), 'Syncing the directory');
+    $this->ids = function (): array {
+        $ids = [];
+        foreach (DB::table('contents')->whereIn('type', ['plugin', 'theme'])->get(['id', 'fields']) as $row) {
+            foreach ((array) json_decode((string) $row->fields, true) as $value) {
+                if (is_string($value) && preg_match('~^[a-z0-9-]+/[a-z0-9-]+$~', $value) === 1) {
+                    $ids[$value] = (string) $row->id;
+                }
+            }
+        }
+
+        return $ids;
+    };
     $this->listing = function (string $package): ?array {
         return (new Acting)->as($this->admin, function () use ($package): ?array {
             foreach ($this->reader->published(new ItemQuery(types: ['plugin', 'theme'], limit: 200))->items as $ref) {
@@ -146,12 +159,34 @@ it('updates a listing when its package changes, keeping the pictures it already 
         ->and($this->images)->toBe($fetched);
 });
 
-it('reports a listing whose package left the index, and leaves it published', function (): void {
+it('takes a listing whose package left the index back to a draft, never deleting it', function (): void {
     ($this->run)([temecmsSitePackage('temecms/teme-seo'), temecmsSitePackage('acme/forms')]);
 
     $report = ($this->run)([temecmsSitePackage('temecms/teme-seo')]);
+    $forms = (new Acting)->as($this->admin, fn () => $this->reader->draft(($this->ids)()['acme/forms'], (string) $this->admin->id), 'Reading the listing');
 
     expect($report->left)->toBe(['acme/forms'])
+        ->and(($this->listing)('acme/forms'))->toBeNull()
+        ->and($forms->item->status)->toBe('draft')
+        ->and($forms->fields['package'])->toBe('acme/forms');
+});
+
+it('keeps a listing whose package is still in the index when its detail can’t be read', function (): void {
+    ($this->run)([temecmsSitePackage('temecms/teme-seo'), temecmsSitePackage('acme/forms')]);
+
+    $report = (new Acting)->as($this->admin, fn (): SyncReport => $this->sync->run([temecmsSitePackage('temecms/teme-seo')], (string) $this->admin->id, ['acme/forms']), 'Syncing the directory');
+
+    expect($report->left)->toBe([])
+        ->and(($this->listing)('acme/forms')['ref']->status)->toBe('published');
+});
+
+it('publishes a listing again when its package comes back to the index', function (): void {
+    ($this->run)([temecmsSitePackage('acme/forms')]);
+    ($this->run)([]);
+
+    $report = ($this->run)([temecmsSitePackage('acme/forms')]);
+
+    expect($report->updated)->toBe(['acme/forms'])
         ->and(($this->listing)('acme/forms')['ref']->status)->toBe('published');
 });
 

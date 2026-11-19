@@ -2,8 +2,8 @@
 
 /**
  * What one directory sync did: the listings it made and changed, those it
- * left as they were, the packages it skipped, and the listings whose
- * package has left the index.
+ * left as they were, the packages it skipped, and the listings it took back
+ * to drafts because their package left the index.
  *
  * @package TemecmsSite
  * @since   1.1.0
@@ -33,7 +33,7 @@ final class SyncReport
     /** @var array<string, string> why each was skipped, by package name or by its place in the index */
     public array $skipped = [];
 
-    /** @var list<string> published listings whose package is no longer in the index */
+    /** @var list<string> listings taken back to drafts because their package is no longer in the index */
     public array $left = [];
 
     /**
@@ -44,7 +44,7 @@ final class SyncReport
     public function summary(): string
     {
         return sprintf(
-            '%d added, %d updated, %d unchanged, %d skipped, %d no longer in the directory.',
+            '%d added, %d updated, %d unchanged, %d skipped, %d taken down.',
             count($this->created),
             count($this->updated),
             count($this->unchanged),

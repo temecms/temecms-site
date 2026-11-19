@@ -48,13 +48,15 @@ final readonly class DirectorySync
 
     /**
      * Makes or changes a published listing for each package, keyed by its
-     * name, and reports the published listings whose package is missing.
+     * name, and takes the published listings whose package left the index
+     * back to drafts, never deleting them.
      *
      * @param  iterable<array<string, mixed>>  $packages  the packages' detail files, as the index lists them
+     * @param  list<string>  $stillListed  packages the index lists whose detail couldn't be read this time, which keep their listings as they are
      *
      * @since 1.1.0
      */
-    public function run(iterable $packages, string $personId): SyncReport
+    public function run(iterable $packages, string $personId, array $stillListed = []): SyncReport
     {
         $report = new SyncReport;
         $existing = $this->existing($personId);
@@ -87,9 +89,20 @@ final readonly class DirectorySync
             }
         }
 
+        foreach ($stillListed as $name) {
+            $seen[$name] = true;
+        }
+
         foreach ($existing as $name => $found) {
-            if (! isset($seen[$name]) && $found['ref']->status === 'published') {
+            if (isset($seen[$name]) || $found['ref']->status !== 'published') {
+                continue;
+            }
+
+            try {
+                $this->writer->unpublish($found['ref'], $personId);
                 $report->left[] = $name;
+            } catch (WriteRefused $refused) {
+                $report->skipped[$name] = $refused->getMessage();
             }
         }
 
