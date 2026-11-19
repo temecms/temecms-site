@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0
+
+The free directory's content on temecms.com.
+
+- Plugin and theme listings gain the directory's fields: summary, icon picture, categories, picked by the Teme team, author and their GitHub account, latest version, works with, last updated, listed, source, issues, documentation and support links, GitHub stars and open issues, releases, permissions, screenshots and changelog. Releases, permissions and screenshots are JSON lists in long-text fields. Both types keep their keys, addresses and existing fields. The theme listing gains a package field.
+- A new taxonomy, Directory categories (`directory_category`, hierarchical), on plugin and theme listings; a listing's first category is its main one.
+- A new content type, Showcase (`showcase`, `/showcase/{slug}/`): the site's name as its title, its address, kind (news, blog, documentation, magazine or other), screenshot, the theme listing and up to eight plugin listings it runs, its owner's line, and whether it is approved.
+- The directory sync, `Temecms\Site\Directory\DirectorySync`: one published listing per package, found again by its package name; the README converted from Markdown (safe mode, raw HTML dropped) into an editor document; the changelog kept; the icon and screenshots copied into Media; nothing changed when the package hasn't changed; listings whose package left the index reported. It is not scheduled yet: Teme does not yet hand a plugin the directory's verified index.
+- The Submit form for a plugin or theme posts to `/temecms-site/submit-package`. With the GitHub token saved in the plugin's settings it opens a pull request on `temecms/directory` adding the listing file; without one it takes nothing. The contact address is never sent anywhere public. A hidden field catches robots, and one address may post five times a minute.
+
 ## 1.0.0
 
 The site plugin of temecms.com, taken out of the TemeCMS theme (0.1.x), which is only the looks from 0.2.0.
