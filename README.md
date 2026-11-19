@@ -62,7 +62,7 @@ To work on a local copy instead, add the plugin's folder, as an absolute path, t
 
 The theme's Submit page posts its form to `/temecms-site/submit-package`, form-encoded, with the fields `repository` (a `https://github.com/owner/repo` address), `kind` (`plugin` or `theme`), `category` (a category key), `contact` (an email address) and `agree`, and a field `website` that people never see and must stay empty. The plugin reads the package's name from the repository's `composer.json` and opens a pull request on [`temecms/directory`](https://github.com/temecms/directory) adding `listings/<vendor>/<name>.json`. The contact address goes into no pull request and nowhere public.
 
-It answers with a redirect back to the page the form was on, saying what happened in the query: `?submitted=pull-request&number=N`, or `?error=` and one of `repository`, `kind`, `category`, `contact`, `agree`, `listed` (already in the directory), `github` (GitHub refused) or `unavailable` (no token is saved). One address may post five times a minute.
+It answers with a redirect back to the page the form was on (`/submit/` when the browser doesn't say), saying what happened in the query: `?submitted=pull-request&number=N`, or `?error=` and one of `repository`, `kind`, `category`, `contact`, `agree`, `listed` (already in the directory), `github` (GitHub refused) or `unavailable` (no token is saved). One address may post five times a minute.
 
 To let it open pull requests, save a fine-grained GitHub token, allowed to write contents and pull requests on `temecms/directory` only, under Site › Plugins › TemeCMS site › **GitHub token for the Submit form**. Without a token the form takes nothing and the page should point to the repository instead.
 

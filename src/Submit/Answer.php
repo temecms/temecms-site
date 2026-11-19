@@ -24,7 +24,7 @@ use Teme\Contracts\Routes\PublicResponse;
 final class Answer
 {
     /** Where a post with no usable Referer goes back to. */
-    public const string FALLBACK = '/plugins/submit/';
+    public const string FALLBACK = '/submit/';
 
     /**
      * A 303 to the page the post came from, on this site only, with these query values.

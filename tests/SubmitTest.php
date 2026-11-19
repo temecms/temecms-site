@@ -51,7 +51,7 @@ beforeEach(function (): void {
         };
     });
 
-    $this->submit = fn (array $form, string $from = '/plugins/submit/') => $this->fetch('/temecms-site/submit-package', 'POST', [
+    $this->submit = fn (array $form, string $from = '/submit/') => $this->fetch('/temecms-site/submit-package', 'POST', [
         'Content-Type' => 'application/x-www-form-urlencoded',
         'Host' => 'localhost',
         'Origin' => 'http://localhost',
@@ -66,7 +66,7 @@ it('opens a pull request adding the listing file, with the owner’s token', fun
 
     $answer = ($this->submit)($this->form);
 
-    $answer->assertStatus(303)->assertHeader('Location', '/plugins/submit/?submitted=pull-request&number=128');
+    $answer->assertStatus(303)->assertHeader('Location', '/submit/?submitted=pull-request&number=128');
 
     $tree = collect($this->sent)->first(fn (Request $request): bool => str_ends_with($request->url(), '/git/trees'));
     $pull = collect($this->sent)->first(fn (Request $request): bool => str_ends_with($request->url(), '/pulls'));
@@ -85,7 +85,7 @@ it('opens a pull request adding the listing file, with the owner’s token', fun
 });
 
 it('takes no package without a token, and says it can’t', function (): void {
-    ($this->submit)($this->form)->assertStatus(303)->assertHeader('Location', '/plugins/submit/?error=unavailable');
+    ($this->submit)($this->form)->assertStatus(303)->assertHeader('Location', '/submit/?error=unavailable');
 
     expect($this->sent)->toBe([]);
 });
@@ -93,7 +93,7 @@ it('takes no package without a token, and says it can’t', function (): void {
 it('says so when the package is already listed', function (): void {
     $this->site->changeSettings(['github_token' => 'placeholder-token']);
 
-    ($this->submit)([...$this->form, 'repository' => 'https://github.com/acme/listed'])->assertStatus(303)->assertHeader('Location', '/plugins/submit/?error=listed');
+    ($this->submit)([...$this->form, 'repository' => 'https://github.com/acme/listed'])->assertStatus(303)->assertHeader('Location', '/submit/?error=listed');
 
     expect(collect($this->sent)->contains(fn (Request $request): bool => $request->method() === 'POST'))->toBeFalse();
 });
@@ -101,7 +101,7 @@ it('says so when the package is already listed', function (): void {
 it('names the first wrong field and sends nothing', function (array $change, string $field): void {
     $this->site->changeSettings(['github_token' => 'placeholder-token']);
 
-    ($this->submit)([...$this->form, ...$change])->assertStatus(303)->assertHeader('Location', '/plugins/submit/?error='.$field);
+    ($this->submit)([...$this->form, ...$change])->assertStatus(303)->assertHeader('Location', '/submit/?error='.$field);
 
     expect($this->sent)->toBe([]);
 })->with([
@@ -128,7 +128,7 @@ it('sends the visitor back only to a page of this site', function (): void {
         'Referer' => 'https://elsewhere.example/phish/',
     ], http_build_query($this->form));
 
-    $answer->assertStatus(303)->assertHeader('Location', '/plugins/submit/?error=unavailable');
+    $answer->assertStatus(303)->assertHeader('Location', '/submit/?error=unavailable');
 });
 
 it('refuses a post from another site’s page', function (): void {
