@@ -48,6 +48,7 @@ if (! function_exists('temecmsSiteRoot')) {
     function temecmsSiteTypes(TemeTestCase $test, Person $admin): void
     {
         if (temecmsSiteSocket()) {
+            temecmsSiteRelease();
             $test->plugin(temecmsSiteRoot())->enable($admin);
 
             return;
@@ -56,6 +57,18 @@ if (! function_exists('temecmsSiteRoot')) {
         $status = Artisan::call('teme:types:import', ['file' => temecmsSiteRoot().'/types/teme-types.json']);
         expect($status)->toBe(0, Artisan::output());
         app(PluginRegistry::class)->flush();
+    }
+
+    /**
+     * Runs the test's Teme as 1.2.0 at least, the release the plugin requires: a development build of the
+     * socket's branch still calls itself by the release before it.
+     */
+    function temecmsSiteRelease(): void
+    {
+        if (version_compare((string) config('teme.version'), '1.2.0', '<')) {
+            config(['teme.version' => '1.2.0']);
+            app(PluginRegistry::class)->flush();
+        }
     }
 
     /** The TemeCMS theme's folder named by TEMECMS_THEME, or null. */

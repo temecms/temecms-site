@@ -1,7 +1,16 @@
 {
     "format": "teme-types",
     "version": 1,
-    "fields": [],
+    "fields": [
+        {
+            "key": "01JQ0TEMECMSSXTE0QDGR0VP00",
+            "type": "doc",
+            "handle": "group",
+            "label": "Group",
+            "fieldType": "text",
+            "show": "hidden"
+        }
+    ],
     "taxonomies": [],
     "grants": [],
     "types": [
@@ -23,7 +32,7 @@
         {
             "key": "plugin",
             "singular": "Plugin",
-            "plural": "Plugins",
+            "plural": "Old plugins",
             "segment": "plugin-pages",
             "icon": "plug",
             "public": true,
@@ -38,7 +47,7 @@
         {
             "key": "theme",
             "singular": "Theme",
-            "plural": "Themes",
+            "plural": "Old themes",
             "segment": "theme-pages",
             "icon": "palette",
             "public": true,

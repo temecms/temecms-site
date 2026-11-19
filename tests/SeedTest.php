@@ -13,15 +13,20 @@
 declare(strict_types=1);
 
 use App\Domain\Contents\Models\Content;
+use App\Domain\Contents\Operations\CreateDraft;
+use App\Domain\Contents\Operations\Input\CreateDraftInput;
 use App\Domain\Contents\Operations\Input\PublishRevisionInput;
 use App\Domain\Contents\Operations\Input\SaveDraftInput;
 use App\Domain\Contents\Operations\PublishRevision;
 use App\Domain\Contents\Operations\SaveDraft;
+use App\Domain\Fields\FieldRegistry;
+use App\Domain\Hooks\Payloads;
 use App\Domain\Media\Models\Media;
 use App\Domain\Menus\Models\Navigation;
 use App\Domain\Menus\Models\NavigationItem;
 use App\Domain\Types\ContentTypeRegistry;
 use App\Domain\Updates\TemeVersion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Teme\Contracts\Settings\SettingsReader;
 use Teme\Testing\Acting;
@@ -130,14 +135,25 @@ it('leaves a published item, a region and a filled menu alone unless their kind 
         ->and($faq->fresh()->title)->toBe('Questions, answered plainly.');
 })->skip(fn (): bool => temecmsSiteTheme() === null, 'needs TEMECMS_THEME, a copy of the TemeCMS theme');
 
-it('takes over the types the old theme seed made, keeping their items', function (): void {
+it('takes over the types the old theme seed made, renaming them and keeping their items and field values', function (): void {
     $this->artisan('teme:types:import', ['file' => temecmsSiteRoot().'/tests/Support/old-theme-types.json'])->assertExitCode(0);
-    $guide = $this->publish('A guide the old seed made', 'doc');
+    // As the old seed stored them, before Teme refused a type named after an admin screen.
+    DB::table('content_type_definitions')->where('key', 'plugin')->update(['definition' => DB::raw("jsonb_set(definition, '{plural}', '\"Plugins\"')")]);
+    DB::table('content_type_definitions')->where('key', 'theme')->update(['definition' => DB::raw("jsonb_set(definition, '{plural}', '\"Themes\"')")]);
+    $guide = (new Acting)->as($this->admin, fn (): Content => app(CreateDraft::class)->execute(new CreateDraftInput('doc', 'A guide the old seed made', ['type' => 'doc', 'content' => [['type' => 'paragraph']]], ['01JQ0TEMECMSSXTE0QDGR0VP00' => 'Install'], (string) $this->admin->id)), 'Writing a guide');
+    $guide = $this->publish(Payloads::item($guide), 'doc');
 
+    temecmsSiteRelease();
     $this->plugin(temecmsSiteRoot())->enable($this->admin);
+    $types = app(ContentTypeRegistry::class);
 
-    expect($this->fetch($guide->url)->status())->toBe(200)
-        ->and(app(ContentTypeRegistry::class)->get('plugin')->plural)->toBe('Plugin directory');
+    expect($types->get('plugin')->plural)->toBe('Plugin directory')
+        ->and($types->get('plugin')->singular)->toBe('Plugin listing')
+        ->and($types->get('theme')->plural)->toBe('Theme directory')
+        ->and($types->get('doc')->plural)->toBe('Documentation')
+        ->and(app(FieldRegistry::class)->find('01JQ0TEMECMSSXTE0QDGR0VP00')?->handle)->toBe('group')
+        ->and(Content::query()->findOrFail($guide->id)->workingRevision->fields)->toMatchArray(['01JQ0TEMECMSSXTE0QDGR0VP00' => 'Install'])
+        ->and($this->fetch($guide->url)->status())->toBe(200);
 })->skip(fn (): bool => ! temecmsSiteSocket(), 'needs the plugin types socket (Teme 1.2), which reads contributes.types');
 
 it('runs as a script from the Teme install’s folder, and exits non-zero with the reason it stopped', function (): void {

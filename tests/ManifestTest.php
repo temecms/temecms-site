@@ -34,6 +34,7 @@ it('gives every key the manifest schema requires, and only keys it knows', funct
 });
 
 it('passes the validator Teme reads a plugin with', function (): void {
+    temecmsSiteRelease();
     $errors = app(ManifestValidator::class)->errors(temecmsSiteJson('teme-plugin.json'), temecmsSiteRoot(), temecmsSiteJson('composer.json'));
 
     expect($errors)->toBe([]);
