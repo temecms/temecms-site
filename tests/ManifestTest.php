@@ -65,6 +65,7 @@ it('keeps the live site’s type keys and addresses, and renames only what peopl
         'doc' => ['Guide', 'Documentation', 'doc-pages', '/docs/{slug}/'],
         'plugin' => ['Plugin listing', 'Plugin directory', 'plugin-pages', '/plugins/{slug}/'],
         'theme' => ['Theme listing', 'Theme directory', 'theme-pages', '/theme-directory/{slug}/'],
+        'showcase' => ['Showcase site', 'Showcase', 'showcase-pages', '/showcase/{slug}/'],
     ]);
 });
 
@@ -77,9 +78,44 @@ it('gives each type the fields its templates and the seed read', function (): vo
     expect($fields)->toBe([
         'page' => ['kicker', 'emphasis'],
         'doc' => ['guide', 'group', 'proof', 'order', 'soon', 'written_for'],
-        'plugin' => ['category', 'package', 'icon', 'asks', 'where_short', 'status'],
-        'theme' => ['badge', 'meta', 'status'],
+        'plugin' => ['category', 'package', 'icon', 'asks', 'where_short', 'status', ...temecmsSiteListingFields()],
+        'theme' => ['badge', 'meta', 'status', 'package', ...temecmsSiteListingFields()],
+        'showcase' => ['site_address', 'site_kind', 'screenshot', 'theme_item', 'plugin_item_1', 'plugin_item_2', 'plugin_item_3', 'plugin_item_4', 'plugin_item_5', 'plugin_item_6', 'plugin_item_7', 'plugin_item_8', 'owner_line', 'approved'],
     ]);
+});
+
+it('files plugin and theme listings under the directory’s categories, the first one the main', function (): void {
+    $file = temecmsSiteJson('types/teme-types.json');
+    $taxonomies = array_column($file['taxonomies'], null, 'key');
+    $types = array_column($file['types'], null, 'key');
+
+    expect(array_keys($taxonomies))->toBe(['directory_category'])
+        ->and($taxonomies['directory_category']['hierarchical'])->toBeTrue()
+        ->and($taxonomies['directory_category']['public'])->toBeTrue()
+        ->and($types['plugin']['taxonomies'])->toBe(['directory_category'])
+        ->and($types['theme']['taxonomies'])->toBe(['directory_category'])
+        ->and($types['showcase']['taxonomies'])->toBe([]);
+});
+
+it('gives the listing fields the kinds the directory sync writes', function (): void {
+    $kinds = [];
+    foreach (temecmsSiteJson('types/teme-types.json')['fields'] as $field) {
+        if (in_array($field['type'], ['plugin', 'theme'], true) && in_array($field['handle'], temecmsSiteListingFields(), true)) {
+            $kinds[$field['type']][$field['handle']] = $field['fieldType'].(($field['settings']['dateOnly'] ?? false) === true ? ':date' : '');
+        }
+    }
+
+    $expected = [
+        'summary' => 'text', 'icon_image' => 'media', 'categories' => 'text', 'picked' => 'boolean',
+        'author_name' => 'text', 'author_github' => 'text', 'latest_version' => 'text', 'works_with' => 'text',
+        'updated_on' => 'datetime:date', 'listed_on' => 'datetime:date',
+        'link_source' => 'url', 'link_issues' => 'url', 'link_docs' => 'url', 'link_support' => 'url',
+        'stars' => 'number', 'open_issues' => 'number',
+        'releases' => 'textarea', 'capabilities' => 'textarea', 'screenshots' => 'textarea', 'changelog' => 'textarea',
+        'directory_sync' => 'textarea',
+    ];
+
+    expect($kinds)->toBe(['plugin' => $expected, 'theme' => $expected]);
 });
 
 it('keeps its own code to Teme’s contracts', function (): void {
@@ -93,14 +129,14 @@ it('keeps its own code to Teme’s contracts', function (): void {
 });
 
 it('opens every PHP file with the plugin’s file header', function (): void {
-    $files = [...glob(temecmsSiteRoot().'/src/*.php'), ...glob(temecmsSiteRoot().'/seed/*.php'), ...glob(temecmsSiteRoot().'/tests/*.php')];
+    $files = [...glob(temecmsSiteRoot().'/src/*.php'), ...glob(temecmsSiteRoot().'/src/*/*.php'), ...glob(temecmsSiteRoot().'/seed/*.php'), ...glob(temecmsSiteRoot().'/tests/*.php')];
 
     foreach ($files as $file) {
         $head = (string) file_get_contents($file, length: 4000);
 
         expect($head)->toStartWith("<?php\n\n/**")
             ->toContain('@package TemecmsSite')
-            ->toContain('@since   1.0.0')
+            ->toMatch('/@since   1\\.\\d+\\.\\d+\n/')
             ->toContain('@license MIT');
     }
 });
