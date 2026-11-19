@@ -4,7 +4,8 @@
  * The Submit form for a plugin or theme. It checks what was sent and opens
  * a pull request on the directory's repository that adds the package's
  * listing file, with the GitHub token the site's owner saved in the
- * plugin's settings. The contact address goes nowhere public.
+ * plugin's settings; with no token it stores the package as a submission
+ * for a person to add by hand. The contact address goes nowhere public.
  *
  * @package TemecmsSite
  * @since   1.1.0
@@ -16,6 +17,10 @@ declare(strict_types=1);
 namespace Temecms\Site\Submit;
 
 use JsonException;
+use Teme\Contracts\Content\HtmlToDocument;
+use Teme\Contracts\Content\Submission;
+use Teme\Contracts\Content\Submissions;
+use Teme\Contracts\Content\WriteRefused;
 use Teme\Contracts\Http\HttpAnswer;
 use Teme\Contracts\Http\OutboundHttp;
 use Teme\Contracts\Routes\PublicRequest;
@@ -49,6 +54,8 @@ final readonly class SubmitPackage implements PublicRoute
     public function __construct(
         private SecretReader $secrets,
         private OutboundHttp $http,
+        private Submissions $submissions,
+        private HtmlToDocument $documents,
     ) {}
 
     /**
@@ -86,7 +93,7 @@ final readonly class SubmitPackage implements PublicRoute
         $token = trim((string) $this->secrets->secret(self::SETTINGS, self::TOKEN));
 
         if ($token === '') {
-            return Answer::back($request, ['error' => 'unavailable']);
+            return $this->store($request, $repository, $kind, $category, $contact);
         }
 
         try {
@@ -94,6 +101,32 @@ final readonly class SubmitPackage implements PublicRoute
         } catch (Throwable) {
             return Answer::back($request, ['error' => 'github']);
         }
+    }
+
+    /**
+     * Stores the package as a submission waiting for review, the contact
+     * address kept for the reviewer alone.
+     *
+     * @param  array{owner: string, repo: string, url: string}  $repository
+     */
+    private function store(PublicRequest $request, array $repository, string $kind, string $category, string $contact): PublicResponse
+    {
+        $url = htmlspecialchars($repository['url'], ENT_QUOTES);
+        $html = "<p>Repository: <a href=\"{$url}\">{$url}</a></p><p>Kind: {$kind}. Main category: {$category}.</p>";
+
+        try {
+            $this->submissions->submit(new Submission(
+                type: $kind,
+                title: "{$repository['owner']}/{$repository['repo']}",
+                body: $this->documents->convert($html),
+                fields: ['link_source' => $repository['url'], 'categories' => $category],
+                from: $contact,
+            ));
+        } catch (WriteRefused) {
+            return Answer::back($request, ['error' => 'unavailable']);
+        }
+
+        return Answer::back($request, ['submitted' => 'by-hand']);
     }
 
     /**

@@ -10,11 +10,31 @@
     },
     "plugin": "Temecms\\Site\\TemecmsSite",
     "capabilities": [
+        "content.read",
+        "content.write",
+        "media.write",
+        "content.submissions",
+        "directory.read",
         "http",
+        "jobs",
         "routes.public"
     ],
     "hosts": [
-        "api.github.com"
+        "api.github.com",
+        "temecms.github.io"
+    ],
+    "jobs": [
+        {
+            "key": "directory-sync",
+            "label": "Directory sync",
+            "long": true
+        }
+    ],
+    "schedules": [
+        {
+            "job": "directory-sync",
+            "every": "hour"
+        }
     ],
     "routes": [
         {
@@ -22,6 +42,18 @@
             "method": "POST",
             "path": "/{code}/submit-package",
             "handler": "Temecms\\Site\\Submit\\SubmitPackage",
+            "verify": {
+                "kind": "custom",
+                "class": "Temecms\\Site\\Submit\\FormPost"
+            },
+            "maxBody": 8192,
+            "throttle": 5
+        },
+        {
+            "id": "submit-site",
+            "method": "POST",
+            "path": "/{code}/submit-site",
+            "handler": "Temecms\\Site\\Submit\\SubmitSite",
             "verify": {
                 "kind": "custom",
                 "class": "Temecms\\Site\\Submit\\FormPost"

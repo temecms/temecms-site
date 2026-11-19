@@ -38,7 +38,7 @@ it('passes the validator Teme reads a plugin with', function (): void {
     $errors = app(ManifestValidator::class)->errors(temecmsSiteJson('teme-plugin.json'), temecmsSiteRoot(), temecmsSiteJson('composer.json'));
 
     expect($errors)->toBe([]);
-})->skip(fn (): bool => ! temecmsSiteSocket(), 'needs the plugin types socket (Teme 1.2), which reads contributes.types');
+})->skip(fn (): bool => ! temecmsSiteSocket(), 'needs a Teme that reads contributes.types and offers the directory’s doors');
 
 it('names the same package and version in its manifest and its Composer file', function (): void {
     $manifest = temecmsSiteJson('teme-plugin.json');

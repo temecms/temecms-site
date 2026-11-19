@@ -14,7 +14,13 @@ declare(strict_types=1);
 use App\Domain\Plugins\PluginRegistry;
 use App\Domain\Plugins\Seams\PluginServices;
 use Illuminate\Support\Facades\Artisan;
+use Teme\Contracts\Content\ContentReader;
 use Teme\Contracts\Content\HtmlToDocument;
+use Teme\Contracts\Content\ItemSnapshot;
+use Teme\Contracts\Content\QueueQuery;
+use Teme\Contracts\Content\Submissions;
+use Teme\Contracts\Directory\VerifiedDirectory;
+use Teme\Testing\Acting;
 use Teme\Testing\Person;
 use Teme\Testing\TemeTestCase;
 
@@ -46,12 +52,17 @@ if (! function_exists('temecmsSiteRoot')) {
         return json_decode((string) file_get_contents(temecmsSiteRoot().'/'.$file), true, 512, JSON_THROW_ON_ERROR);
     }
 
-    /** Whether the running Teme reads `contributes.types` (Teme 1.2 and later). */
+    /**
+     * Whether the running Teme can enable the plugin: it reads `contributes.types`, and offers the
+     * directory's doors (the verified index, unpublishing, and visitors' submissions).
+     */
     function temecmsSiteSocket(): bool
     {
         $schema = json_decode((string) file_get_contents(base_path('packages/teme-contracts/schema/teme-plugin.schema.json')), true, 512, JSON_THROW_ON_ERROR);
 
-        return isset($schema['properties']['contributes']['properties']['types']);
+        return isset($schema['properties']['contributes']['properties']['types'])
+            && interface_exists(VerifiedDirectory::class)
+            && interface_exists(Submissions::class);
     }
 
     /**
@@ -159,6 +170,28 @@ if (! function_exists('temecmsSiteRoot')) {
         $doors = app(PluginServices::class)->for('temecms/temecms-site', 'temecms-site', [], []);
 
         return $doors[HtmlToDocument::class];
+    }
+
+    /**
+     * The visitors' submissions waiting for review, oldest first, as an administrator reads them.
+     *
+     * @return list<ItemSnapshot>
+     */
+    function temecmsSiteSubmissions(Person $admin): array
+    {
+        return (new Acting)->as($admin, function () use ($admin): array {
+            $doors = app(PluginServices::class)->for('temecms/temecms-site', 'temecms-site', ['content.read'], []);
+            $reader = $doors[ContentReader::class];
+            $found = [];
+
+            foreach ($reader->queue(new QueueQuery(statuses: ['review'], limit: 200), (string) $admin->id)->items as $queued) {
+                if ($queued->item->submission) {
+                    $found[] = $reader->draft($queued->item->id, (string) $admin->id);
+                }
+            }
+
+            return $found;
+        }, 'Reading the submissions');
     }
 
     /** The TemeCMS theme's folder named by TEMECMS_THEME, or null. */

@@ -3,8 +3,8 @@
 /**
  * The Submit form for a plugin or theme: with the owner's GitHub token it
  * opens a pull request on the directory's repository adding the listing
- * file; without one it takes nothing; a filled honeypot and a sixth post in
- * a minute go no further.
+ * file; without one it stores a submission for a person; a filled honeypot
+ * and a sixth post in a minute go no further.
  *
  * @package TemecmsSite
  * @since   1.1.0
@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Teme\Contracts\Content\Submissions;
 use Teme\Testing\TemeTestCase;
 
 require_once __DIR__.'/Support/helpers.php';
@@ -22,8 +23,8 @@ require_once __DIR__.'/Support/helpers.php';
 uses(TemeTestCase::class);
 
 beforeEach(function (): void {
-    if (! temecmsSiteSocket()) {
-        $this->markTestSkipped('needs the plugin types socket (Teme 1.2), which reads contributes.types');
+    if (! interface_exists(Submissions::class)) {
+        $this->markTestSkipped('needs Teme’s Submissions door (the directory source)');
     }
 
     temecmsSiteRelease();
@@ -84,10 +85,19 @@ it('opens a pull request adding the listing file, with the owner’s token', fun
     }
 });
 
-it('takes no package without a token, and says it can’t', function (): void {
-    ($this->submit)($this->form)->assertStatus(303)->assertHeader('Location', '/submit/?error=unavailable');
+it('stores the package as a submission for a person to add by hand when no token is saved', function (): void {
+    ($this->submit)($this->form)->assertStatus(303)->assertHeader('Location', '/submit/?submitted=by-hand');
 
-    expect($this->sent)->toBe([]);
+    $stored = temecmsSiteSubmissions($this->admin);
+
+    expect($this->sent)->toBe([])
+        ->and($stored)->toHaveCount(1)
+        ->and($stored[0]->item->type)->toBe('plugin')
+        ->and($stored[0]->item->status)->toBe('review')
+        ->and($stored[0]->item->title)->toBe('acme/forms')
+        ->and($stored[0]->fields['link_source'])->toBe('https://github.com/acme/forms')
+        ->and($stored[0]->fields['categories'])->toBe('forms')
+        ->and(json_encode($stored[0]->body))->not->toContain('author@example.com');
 });
 
 it('says so when the package is already listed', function (): void {
@@ -114,21 +124,21 @@ it('names the first wrong field and sends nothing', function (array $change, str
 ]);
 
 it('goes no further when the honeypot is filled', function (): void {
-    $this->site->changeSettings(['github_token' => 'placeholder-token']);
-
     ($this->submit)([...$this->form, 'website' => 'https://spam.example'])->assertStatus(303);
 
-    expect($this->sent)->toBe([]);
+    expect($this->sent)->toBe([])
+        ->and(temecmsSiteSubmissions($this->admin))->toBe([]);
 });
 
 it('sends the visitor back only to a page of this site', function (): void {
+    $this->site->changeSettings(['github_token' => 'placeholder-token']);
     $answer = $this->fetch('/temecms-site/submit-package', 'POST', [
         'Content-Type' => 'application/x-www-form-urlencoded',
         'Host' => 'localhost',
         'Referer' => 'https://elsewhere.example/phish/',
     ], http_build_query($this->form));
 
-    $answer->assertStatus(303)->assertHeader('Location', '/submit/?error=unavailable');
+    $answer->assertStatus(303)->assertHeader('Location', '/submit/?submitted=pull-request&number=128');
 });
 
 it('refuses a post from another site’s page', function (): void {
@@ -140,6 +150,8 @@ it('refuses a post from another site’s page', function (): void {
 });
 
 it('answers at most five posts a minute from one address', function (): void {
+    $this->site->changeSettings(['github_token' => 'placeholder-token']);
+
     foreach (range(1, 5) as $post) {
         ($this->submit)($this->form)->assertStatus(303);
     }
