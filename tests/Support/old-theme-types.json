@@ -1,0 +1,55 @@
+{
+    "format": "teme-types",
+    "version": 1,
+    "fields": [],
+    "taxonomies": [],
+    "grants": [],
+    "types": [
+        {
+            "key": "doc",
+            "singular": "Guide",
+            "plural": "Documentation",
+            "segment": "doc-pages",
+            "icon": "book-open",
+            "public": true,
+            "archive": true,
+            "searchable": true,
+            "supports": [
+                "excerpt",
+                "seo"
+            ],
+            "pattern": "/docs/{slug}/"
+        },
+        {
+            "key": "plugin",
+            "singular": "Plugin",
+            "plural": "Plugins",
+            "segment": "plugin-pages",
+            "icon": "plug",
+            "public": true,
+            "archive": true,
+            "searchable": true,
+            "supports": [
+                "excerpt",
+                "seo"
+            ],
+            "pattern": "/plugins/{slug}/"
+        },
+        {
+            "key": "theme",
+            "singular": "Theme",
+            "plural": "Themes",
+            "segment": "theme-pages",
+            "icon": "palette",
+            "public": true,
+            "archive": true,
+            "searchable": true,
+            "supports": [
+                "excerpt",
+                "seo",
+                "featured_image"
+            ],
+            "pattern": "/theme-directory/{slug}/"
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "temecms/temecms-site",
+    "type": "teme-plugin",
+    "description": "The temecms.com site plugin: the Documentation, Plugin directory and Theme directory content types, and the site's starting content.",
+    "keywords": ["teme", "temecms"],
+    "license": "MIT",
+    "version": "1.0.0",
+    "require": {
+        "php": "^8.4",
+        "teme/contracts": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Temecms\\Site\\": "src/"
+        }
+    }
+}

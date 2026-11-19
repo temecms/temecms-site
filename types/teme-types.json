@@ -1,0 +1,338 @@
+{
+    "format": "teme-types",
+    "version": 1,
+    "types": [
+        {
+            "key": "doc",
+            "singular": "Guide",
+            "plural": "Documentation",
+            "segment": "doc-pages",
+            "icon": "book-open",
+            "single": false,
+            "public": true,
+            "archive": true,
+            "searchable": true,
+            "taxonomies": [],
+            "supports": [
+                "excerpt",
+                "seo"
+            ],
+            "comments": null,
+            "pattern": "/docs/{slug}/",
+            "permissions": "shared"
+        },
+        {
+            "key": "plugin",
+            "singular": "Plugin listing",
+            "plural": "Plugin directory",
+            "segment": "plugin-pages",
+            "icon": "plug",
+            "single": false,
+            "public": true,
+            "archive": true,
+            "searchable": true,
+            "taxonomies": [],
+            "supports": [
+                "excerpt",
+                "seo"
+            ],
+            "comments": null,
+            "pattern": "/plugins/{slug}/",
+            "permissions": "shared"
+        },
+        {
+            "key": "theme",
+            "singular": "Theme listing",
+            "plural": "Theme directory",
+            "segment": "theme-pages",
+            "icon": "palette",
+            "single": false,
+            "public": true,
+            "archive": true,
+            "searchable": true,
+            "taxonomies": [],
+            "supports": [
+                "excerpt",
+                "seo",
+                "featured_image"
+            ],
+            "comments": null,
+            "pattern": "/theme-directory/{slug}/",
+            "permissions": "shared"
+        }
+    ],
+    "fields": [
+        {
+            "key": "01M7RHMR01YD1GWQ3H3BJ1ZNKD",
+            "type": "page",
+            "handle": "kicker",
+            "label": "Kicker",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0230EEY3AMR038MDDG",
+            "type": "page",
+            "handle": "emphasis",
+            "label": "Words to set in italics in the title",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR035VWEK2EP156XBTS3",
+            "type": "doc",
+            "handle": "guide",
+            "label": "Guide",
+            "help": "",
+            "fieldType": "select",
+            "settings": {
+                "choices": [
+                    {
+                        "value": "editors",
+                        "label": "The editors' guide"
+                    },
+                    {
+                        "value": "operators",
+                        "label": "The operators' guide"
+                    },
+                    {
+                        "value": "developers",
+                        "label": "For developers"
+                    }
+                ]
+            },
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR04ZH4FBYXTEVZAY0N4",
+            "type": "doc",
+            "handle": "group",
+            "label": "Group",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR05Y8W9J3VZTGWYYKMM",
+            "type": "doc",
+            "handle": "proof",
+            "label": "Proof level",
+            "help": "",
+            "fieldType": "select",
+            "settings": {
+                "choices": [
+                    {
+                        "value": "ci",
+                        "label": "Checked by CI"
+                    },
+                    {
+                        "value": "tests",
+                        "label": "Checked by tests"
+                    },
+                    {
+                        "value": "dokploy",
+                        "label": "Run on Dokploy"
+                    },
+                    {
+                        "value": "none",
+                        "label": "Not yet proved"
+                    }
+                ]
+            },
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR06TEESNM32ZKJJ23BW",
+            "type": "doc",
+            "handle": "order",
+            "label": "Order in its group",
+            "help": "",
+            "fieldType": "number",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR07A5R18YNR0F64X4ZB",
+            "type": "doc",
+            "handle": "soon",
+            "label": "Not written yet",
+            "help": "",
+            "fieldType": "boolean",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR08RSM7DW36B6MYR01Y",
+            "type": "doc",
+            "handle": "written_for",
+            "label": "Written for",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR09F0VE3Z3K23YQJ2QN",
+            "type": "plugin",
+            "handle": "category",
+            "label": "Category",
+            "help": "",
+            "fieldType": "select",
+            "settings": {
+                "choices": [
+                    {
+                        "value": "workflow",
+                        "label": "Workflow"
+                    },
+                    {
+                        "value": "search",
+                        "label": "Search and social"
+                    },
+                    {
+                        "value": "reading",
+                        "label": "Reading"
+                    }
+                ]
+            },
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0ARVZ8FFWRCX3EGAJC",
+            "type": "plugin",
+            "handle": "package",
+            "label": "Package",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0BFZDZFMJR97Z2FWX8",
+            "type": "plugin",
+            "handle": "icon",
+            "label": "Icon",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0CANCF4JG1WWYA3JRE",
+            "type": "plugin",
+            "handle": "asks",
+            "label": "What it asks for, in a line",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0DSZ3XKP4B19XMWRQZ",
+            "type": "plugin",
+            "handle": "where_short",
+            "label": "Where it appears, in a line",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0E1BM9ZG8WXDBA9BVR",
+            "type": "plugin",
+            "handle": "status",
+            "label": "Status",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0FC6MQWPGFPNZRB1C5",
+            "type": "theme",
+            "handle": "badge",
+            "label": "Badge",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0GS45QPBVE8QWSBWN0",
+            "type": "theme",
+            "handle": "meta",
+            "label": "Facts for the card",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        },
+        {
+            "key": "01M7RHMR0HSK2XCBFPY81QB2H9",
+            "type": "theme",
+            "handle": "status",
+            "label": "Status",
+            "help": "",
+            "fieldType": "text",
+            "settings": {},
+            "required": false,
+            "search": false,
+            "filterable": false,
+            "show": "hidden"
+        }
+    ],
+    "taxonomies": [],
+    "grants": []
+}
