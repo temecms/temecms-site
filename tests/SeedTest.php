@@ -38,7 +38,7 @@ require_once dirname(__DIR__).'/seed/steps.php';
 uses(TemeTestCase::class);
 
 /** Every step, in order. */
-const TEMECMS_SITE_ALL = ['media', 'theme', 'content', 'regions', 'menus', 'settings', 'addresses', 'activate'];
+const TEMECMS_SITE_ALL = ['media', 'theme', 'content', 'regions', 'menus', 'settings', 'addresses', 'activate', 'words'];
 
 beforeEach(function (): void {
     $this->admin = $this->person('administrator');
@@ -89,7 +89,7 @@ it('uploads its pictures once, with their alt text, and keeps its state in stora
     expect($made)->toBe(['media' => 14])
         ->and($state['media'])->toHaveCount(14)
         ->and(Media::query()->whereKey($state['media']['consent'])->value('alt'))->not->toBe('')
-        ->and(glob(temecmsSiteRoot().'/seed/*.json'))->toBe([temecmsSiteRoot().'/seed/content.json'])
+        ->and(glob(temecmsSiteRoot().'/seed/*.json'))->toBe([temecmsSiteRoot().'/seed/content.json', temecmsSiteRoot().'/seed/words.json'])
         ->and(($this->seed)(['media']))->toBe([]);
 });
 
@@ -165,5 +165,138 @@ it('runs as a script from the Teme install’s folder, and exits non-zero with t
     expect($elsewhere->exitCode())->toBe(1)
         ->and($elsewhere->errorOutput())->toContain("Run the seed from the Teme install's folder")
         ->and($unknown->exitCode())->toBe(1)
-        ->and($unknown->errorOutput())->toContain('Name the steps to run, from: media theme content regions menus settings addresses activate. Unknown: types.');
+        ->and($unknown->errorOutput())->toContain('Name the steps to run, from: media theme content regions menus settings addresses activate words. Unknown: types.');
 });
+
+
+/** The text of an item's published document. */
+function temecmsSiteBody(Content $item): string
+{
+    return temecmsSiteText($item->fresh()->publishedRevision->document);
+}
+
+/**
+ * Puts every passage the `words` step rewrites back to the older seed's words, as a site an older seed filled holds them.
+ */
+function temecmsSiteAge(object $test): void
+{
+    $words = temecmsSiteJson('seed/words.json')['items'];
+    (new Acting)->as($test->admin, function () use ($words, $test): void {
+        $aid = (string) $test->admin->id;
+        foreach ($words as $w) {
+            $item = Content::query()->where('type', $w['type'])->where('slug', $w['slug'])->firstOrFail();
+            $revision = $item->publishedRevision;
+            $document = $revision->document;
+            $fields = (array) $revision->fields;
+            foreach ($w['replace'] as $r) {
+                $now = str_replace('{{release}}', TemeVersion::current(), temecms_site_plain_text($r['new']));
+                foreach ($document['content'] as $i => $block) {
+                    if (temecms_site_plain_text($block) === $now) {
+                        $document['content'][$i] = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $r['old']]]];
+
+                        break;
+                    }
+                }
+            }
+            app(SaveDraft::class)->execute(new SaveDraftInput($item->id, (string) $revision->title, $document, $fields, (string) $item->working_revision_id, $aid, (array) $revision->terms));
+            $item->refresh();
+            app(PublishRevision::class)->execute(new PublishRevisionInput($item->id, (string) $item->working_revision_id, $aid));
+        }
+    }, 'Putting back the older words');
+}
+
+it('has, for every passage it rewrites, the words the seed writes now', function (): void {
+    $content = temecmsSiteJson('seed/content.json');
+    $now = [];
+    foreach (['pages', 'posts', 'docs', 'plugins', 'themes'] as $bucket) {
+        foreach ($content[$bucket] as $item) {
+            $now[$item['type'].':'.$item['slug']] = array_map('temecms_site_plain_text', $item['body']['content']);
+        }
+    }
+    foreach ($content['regions'] as $name => $body) {
+        $now['region:temecms--'.$name] = array_map('temecms_site_plain_text', $body['content']);
+    }
+    $words = temecmsSiteJson('seed/words.json')['items'];
+
+    expect($words)->not->toBeEmpty();
+    foreach ($words as $w) {
+        foreach ($w['replace'] as $r) {
+            expect($now[$w['type'].':'.$w['slug']] ?? [])->toContain(temecms_site_plain_text($r['new']))
+                ->and($now[$w['type'].':'.$w['slug']])->not->toContain($r['old']);
+        }
+    }
+});
+
+it('says nothing is out of date in the seed,', function (): void {
+    $content = temecmsSiteJson('seed/content.json');
+    unset($content['posts']); // the 0.7.0-alpha.1 notes are history, and say so
+    $text = json_encode($content, JSON_UNESCAPED_UNICODE);
+
+    expect($text)->not->toMatch('/alpha|0\.7|Not yet\. Teme/i');
+});
+
+it('brings the older seed’s words up to date, once, and changes nothing the second time', function (): void {
+    temecmsSiteTypes($this, $this->admin);
+    $this->theme(temecmsSiteTheme())->activate();
+    ($this->seed)(array_diff(TEMECMS_SITE_ALL, ['words']));
+    $state = json_decode((string) file_get_contents($this->state), true);
+    temecmsSiteAge($this);
+    $page = static fn (string $key): Content => Content::query()->findOrFail(json_decode((string) file_get_contents(test()->state), true)['content']['page:'.$key]);
+
+    expect(temecmsSiteBody($page('faq')))->toContain('Teme is in alpha');
+
+    $says = [];
+    $made = temecms_site_seed(['words'], $this->admin->id, $this->state, [], function (string $line) use (&$says): void {
+        $says[] = $line;
+    });
+
+    expect($made)->toHaveKey('words')
+        ->and(temecmsSiteBody($page('faq')))->toContain('Yes. Teme 1.x is a stable release line')->toContain('This site runs Teme '.TemeVersion::current().'.')
+        ->not->toContain('alpha')->not->toContain('{{release}}')
+        ->and(temecmsSiteBody($page('roadmap')))->toContain('Teme 1.2')->toContain('The directory')->not->toContain('alpha')->not->toContain('Installing and listing')
+        ->and(temecmsSiteBody($page('migration')))->not->toContain('alpha')
+        ->and(array_filter($says, static fn (string $line): bool => str_contains($line, 'left as')))->toBe([]);
+
+    expect(temecms_site_seed(['words'], $this->admin->id, $this->state))->toBe([])
+        ->and(($this->seed)(TEMECMS_SITE_ALL))->toBe([]);
+})->skip(fn (): bool => temecmsSiteTheme() === null, 'needs TEMECMS_THEME, a copy of the TemeCMS theme');
+
+it('leaves a passage a person edited, and an item with a draft waiting alone, and says so', function (): void {
+    temecmsSiteTypes($this, $this->admin);
+    $this->theme(temecmsSiteTheme())->activate();
+    ($this->seed)(array_diff(TEMECMS_SITE_ALL, ['words']));
+    $state = json_decode((string) file_get_contents($this->state), true);
+    temecmsSiteAge($this);
+    $aid = (string) $this->admin->id;
+
+    $faq = Content::query()->findOrFail($state['content']['page:faq']);
+    $roadmap = Content::query()->findOrFail($state['content']['page:roadmap']);
+    $post = Content::query()->findOrFail($state['content']['post:release-0-7-0-alpha-1']);
+    (new Acting)->as($this->admin, function () use ($faq, $roadmap, $aid): void {
+        // The first answer rewritten by a person; the rest of the FAQ is as the older seed left it.
+        $document = $faq->publishedRevision->document;
+        foreach ($document['content'] as $i => $block) {
+            if (str_starts_with(temecms_site_plain_text($block), 'Not yet. Teme is in alpha')) {
+                $document['content'][$i] = ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Ours.']]];
+            }
+        }
+        app(SaveDraft::class)->execute(new SaveDraftInput($faq->id, (string) $faq->publishedRevision->title, $document, (array) $faq->publishedRevision->fields, (string) $faq->working_revision_id, $aid));
+        $faq->refresh();
+        app(PublishRevision::class)->execute(new PublishRevisionInput($faq->id, (string) $faq->working_revision_id, $aid));
+        // A draft waiting on the roadmap, not published.
+        app(SaveDraft::class)->execute(new SaveDraftInput($roadmap->id, (string) $roadmap->publishedRevision->title, $roadmap->publishedRevision->document, (array) $roadmap->publishedRevision->fields, (string) $roadmap->working_revision_id, $aid));
+    }, 'Editing the site');
+
+    $says = [];
+    temecms_site_seed(['words'], $this->admin->id, $this->state, [], function (string $line) use (&$says): void {
+        $says[] = $line;
+    });
+    $said = implode("\n", $says);
+
+    expect(temecmsSiteBody($faq))->toContain('Ours.')->not->toContain('Yes. Teme 1.x is a stable release line')
+        ->toContain('A management API lets outside tools sign in')
+        ->and($said)->toContain('words page:faq: the text has changed, so "Not yet. Teme is in alpha')
+        ->and(temecmsSiteBody($roadmap))->toContain('Alpha · 0.7.0-alpha.1')
+        ->and($said)->toContain('words page:roadmap: a draft is waiting')
+        ->and(temecmsSiteBody($post))->toContain('The full notes are under');
+})->skip(fn (): bool => temecmsSiteTheme() === null, 'needs TEMECMS_THEME, a copy of the TemeCMS theme');

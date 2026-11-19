@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The seed's words are up to date for Teme 1.2: the FAQ says Teme can be used now and that it has a management API and languages, the Roadmap lists Teme 1.0, 1.1 and 1.2 as built with the directory next, and the Moving from WordPress, Developers, Plugins, Themes and Docs pages and the 0.7.0-alpha.1 notes no longer call Teme an alpha or installing from the admin planned.
+- A new seed step, `words`, brings those passages up to date on a site an older seed filled, only where the item still holds the older seed's text exactly, and says what it changed and what it left. See the README's "Moving an existing site".
+
 ## 1.1.0
 
 The free directory's content on temecms.com.

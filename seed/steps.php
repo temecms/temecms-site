@@ -61,6 +61,29 @@ if (! class_exists('TemecmsSiteSeedStopped', false)) {
     final class TemecmsSiteSeedStopped extends RuntimeException {}
 }
 
+if (! function_exists('temecms_site_plain_text')) {
+    /**
+     * The text of a block of a stored document as the `words` step compares it: the leaves' text joined, with
+     * the items of a list and the cells of a row apart by a space. The same rule as `plain` in
+     * seed/build-words.mjs, which wrote the passages it is compared with.
+     *
+     * @param  array<string, mixed>  $node
+     */
+    function temecms_site_plain_text(array $node): string
+    {
+        if (($node['type'] ?? null) === 'text') {
+            return (string) ($node['text'] ?? '');
+        }
+        if (isset($node['attrs']['text']) && is_string($node['attrs']['text'])) {
+            return $node['attrs']['text'];
+        }
+        $children = (array) ($node['content'] ?? []);
+        $inline = array_reduce($children, static fn (bool $all, array $child): bool => $all && ($child['type'] ?? null) === 'text', true);
+
+        return implode($inline ? '' : ' ', array_map('temecms_site_plain_text', $children));
+    }
+}
+
 if (! function_exists('temecms_site_seed')) {
     /**
      * Runs the steps named, in their fixed order, and returns what it made or changed, by kind: empty when
@@ -221,7 +244,14 @@ if (! function_exists('temecms_site_seed')) {
 
             return $map;
         };
-        $resolve = static function (mixed $node) use (&$resolve, &$state, $release): mixed {
+        // An item of this seed by its kind and key, to find on a site whose state file is gone or never held it.
+        $itemsByRef = [];
+        foreach (['pages', 'posts', 'docs', 'plugins', 'themes'] as $bucket) {
+            foreach ($content[$bucket] ?? [] as $it) {
+                $itemsByRef[$it['type'].':'.$it['key']] = $it;
+            }
+        }
+        $resolve = static function (mixed $node) use (&$resolve, &$state, $release, $itemsByRef): mixed {
             if (is_array($node)) {
                 foreach ($node as $k => $v) {
                     $node[$k] = $resolve($v);
@@ -239,7 +269,7 @@ if (! function_exists('temecms_site_seed')) {
                 if (str_starts_with($node, 'teme:seed/')) {
                     $ref = substr($node, strlen('teme:seed/'));
                     [$kind, $key] = explode(':', $ref, 2);
-                    $id = $state['content'][$kind.':'.$key] ?? null;
+                    $id = $state['content'][$kind.':'.$key] ?? (isset($itemsByRef[$ref]) ? Content::query()->where('type', $itemsByRef[$ref]['type'])->where('slug', $itemsByRef[$ref]['slug'])->value('id') : null);
                     if ($id === null) {
                         throw new RuntimeException("The seed names [$ref], which has not been made.");
                     }
@@ -471,6 +501,82 @@ if (! function_exists('temecms_site_seed')) {
             }
         }
 
+
+        // ---------------------------------------------------------------- words: what an older seed wrote, brought up to date
+        /*
+         * Rewrites, on a site an older seed filled, the passages that went out of date, and only where the item still
+         * holds the older seed's text exactly: a block someone has edited, or an item with a draft waiting, is left as it
+         * is and named. A passage already as it is now is passed over without a word, so a second run changes nothing.
+         */
+        if ($run('words')) {
+            $words = json_decode((string) file_get_contents(__DIR__.'/words.json'), true, 512, JSON_THROW_ON_ERROR)['items'];
+            $isNow = static function (string $have, array $new): bool {
+                $want = temecms_site_plain_text($new);
+                // A release number written by an earlier run is as good as today's.
+                $pattern = '/^'.str_replace(preg_quote('{{release}}', '/'), '\S+', preg_quote($want, '/')).'$/u';
+
+                return $have === $want || preg_match($pattern, $have) === 1;
+            };
+            $skipped = 0;
+            foreach ($words as $w) {
+                /** @var Content|null $c */
+                $c = Content::query()->where('type', $w['type'])->where('slug', $w['slug'])->first();
+                if ($c === null || empty($c->published_revision_id)) {
+                    $say("words {$w['ref']}: not on this site, left as it is");
+
+                    continue;
+                }
+                $revision = $c->publishedRevision;
+                $edited = false;
+                $document = $revision->document;
+                $blocks = array_values((array) ($document['content'] ?? []));
+                $fields = (array) $revision->fields;
+                $keys = $fieldKeys($w['type']);
+                $changed = 0;
+                $kept = 0;
+                $held = (string) $c->working_revision_id !== (string) $c->published_revision_id;
+                foreach ($w['replace'] as $r) {
+                    $at = null;
+                    foreach ($blocks as $i => $block) {
+                        if (temecms_site_plain_text($block) === $r['old']) {
+                            $at = $i;
+
+                            break;
+                        }
+                    }
+                    if ($at !== null && ! $held) {
+                        $blocks[$at] = $resolve($r['new']);
+                        $changed++;
+                    } elseif ($at !== null || ! array_filter($blocks, static fn (array $block): bool => $isNow(temecms_site_plain_text($block), $r['new']))) {
+                        $kept++;
+                        $say("words {$w['ref']}: ".($held ? 'a draft is waiting, so' : 'the text has changed, so')." \"".mb_strimwidth($r['old'], 0, 60, '…').'" is left as it is');
+                    }
+                }
+                foreach ($w['fields'] ?? [] as $handle => [$was, $now]) {
+                    $key = $keys[$handle] ?? null;
+                    if ($key === null || (string) ($fields[$key] ?? '') === (string) $now) {
+                        continue;
+                    }
+                    if ((string) ($fields[$key] ?? '') === (string) $was && ! $held && $changed > 0) {
+                        $fields[$key] = $now;
+                        $changed++;
+                    }
+                }
+                if ($changed > 0) {
+                    $document['content'] = $blocks;
+                    $as(fn () => app(SaveDraft::class)->execute(new SaveDraftInput($c->id, (string) $revision->title, $document, $fields, (string) $c->working_revision_id, $aid, array_values((array) $revision->terms))), "Updating the words of {$w['ref']}");
+                    $c->refresh();
+                    $as(fn () => app(PublishRevision::class)->execute(new PublishRevisionInput($c->id, (string) $c->working_revision_id, $aid)), "Publishing the words of {$w['ref']}");
+                    $count('words');
+                    $say("words {$w['ref']}: ".$changed.' changed');
+                }
+                $skipped += $kept;
+            }
+            if ($skipped > 0) {
+                $say("words: $skipped passages were left as they are, because a person has changed them or a draft is waiting.");
+            }
+        }
+
         return $made;
     }
 
@@ -481,6 +587,6 @@ if (! function_exists('temecms_site_seed')) {
      */
     function temecms_site_seed_steps(): array
     {
-        return ['media', 'theme', 'content', 'regions', 'menus', 'settings', 'addresses', 'activate'];
+        return ['media', 'theme', 'content', 'regions', 'menus', 'settings', 'addresses', 'activate', 'words'];
     }
 }
