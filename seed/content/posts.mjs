@@ -9,6 +9,7 @@ export default [
         excerpt: 'An item can now credit several people, in order, and a person needn’t have an account. With this release the foundations of every area are in place.',
         publishedAt: '2026-11-13T09:00:00Z',
         category: 'Release notes',
+        byline: 'The Teme team',
         body: doc(
             h2('Bylines'),
             p('A story can credit a news agency, a guest writer, or a writer who has left. Deleting an account keeps the departed writer’s name on their work, and their author page answers at the same address.'),

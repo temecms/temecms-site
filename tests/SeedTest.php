@@ -19,6 +19,9 @@ use App\Domain\Contents\Operations\Input\PublishRevisionInput;
 use App\Domain\Contents\Operations\Input\SaveDraftInput;
 use App\Domain\Contents\Operations\PublishRevision;
 use App\Domain\Contents\Operations\SaveDraft;
+use App\Domain\People\Credits;
+use App\Domain\People\Operations\Input\SetBylinesInput;
+use App\Domain\People\Operations\SetBylines;
 use App\Domain\Fields\FieldRegistry;
 use App\Domain\Hooks\Payloads;
 use App\Domain\Media\Models\Media;
@@ -105,6 +108,8 @@ it('loads the whole site, then changes nothing on a second run', function (): vo
 
     expect($made['published'])->toBe(59)
         ->and($made['regions'])->toBe(7)
+        ->and($made['bylines'])->toBe(1)
+        ->and(app(Credits::class)->shown([$state['content']['post:release-0-7-0-alpha-1']])[$state['content']['post:release-0-7-0-alpha-1']][0]->name)->toBe('The Teme team')
         ->and(temecmsSiteText($faq->publishedRevision->document))->toContain('This site runs Teme '.TemeVersion::current().'.')
         ->not->toContain('{{release}}')
         ->not->toContain('alpha')
@@ -176,7 +181,8 @@ function temecmsSiteBody(Content $item): string
 }
 
 /**
- * Puts every passage the `words` step rewrites back to the older seed's words, as a site an older seed filled holds them.
+ * Puts every passage the `words` step rewrites back to the older seed's words, and the post's byline back to its
+ * owner, as a site an older seed filled holds them.
  */
 function temecmsSiteAge(object $test): void
 {
@@ -208,6 +214,9 @@ function temecmsSiteAge(object $test): void
             app(SaveDraft::class)->execute(new SaveDraftInput($item->id, (string) $revision->title, $document, $fields, (string) $item->working_revision_id, $aid, (array) $revision->terms));
             $item->refresh();
             app(PublishRevision::class)->execute(new PublishRevisionInput($item->id, (string) $item->working_revision_id, $aid));
+            if (isset($w['byline'])) {
+                app(SetBylines::class)->execute(new SetBylinesInput($aid, (string) $item->id, []));
+            }
         }
     }, 'Putting back the older words');
 }
@@ -234,7 +243,7 @@ it('has, for every passage it rewrites, the words the seed writes now', function
     }
 });
 
-it('says nothing is out of date in the seed,', function (): void {
+it('says nothing is out of date in the seed, and says "being written" on a guide not written yet', function (): void {
     $content = temecmsSiteJson('seed/content.json');
     unset($content['posts']); // the 0.7.0-alpha.1 notes are history, and say so
     $text = json_encode($content, JSON_UNESCAPED_UNICODE);
@@ -251,7 +260,8 @@ it('brings the older seed’s words up to date, once, and changes nothing the se
     temecmsSiteAge($this);
     $page = static fn (string $key): Content => Content::query()->findOrFail(json_decode((string) file_get_contents(test()->state), true)['content']['page:'.$key]);
     $stub = Content::query()->where('type', 'doc')->where('slug', 'configuring-teme')->firstOrFail();
-    $proof = collect(app(FieldRegistry::class)->forType('doc'))->firstWhere('handle', 'proof')->key;
+    $fields = app(FieldRegistry::class);
+    $proof = collect($fields->forType('doc'))->firstWhere('handle', 'proof')->key;
 
     expect(temecmsSiteBody($page('faq')))->toContain('Teme is in alpha')
         ->and(temecmsSiteBody($stub))->toContain('Its page is not drawn yet.')
@@ -263,30 +273,33 @@ it('brings the older seed’s words up to date, once, and changes nothing the se
     });
 
     expect($made)->toHaveKey('words')
+        ->and($made['bylines'])->toBe(1)
         ->and(temecmsSiteBody($page('faq')))->toContain('Yes. Teme 1.x is a stable release line')->toContain('This site runs Teme '.TemeVersion::current().'.')
         ->not->toContain('alpha')->not->toContain('{{release}}')
         ->and(temecmsSiteBody($page('roadmap')))->toContain('Teme 1.2')->toContain('The directory')->not->toContain('alpha')->not->toContain('Installing and listing')
         ->and(temecmsSiteBody($page('migration')))->not->toContain('alpha')
         ->and(temecmsSiteBody($stub))->toContain('This guide is being written.')->not->toContain('not drawn yet')
         ->and((string) $stub->fresh()->publishedRevision->fields[$proof])->toBe('')
+        ->and(app(Credits::class)->shown([$state['content']['post:release-0-7-0-alpha-1']])[$state['content']['post:release-0-7-0-alpha-1']][0]->name)->toBe('The Teme team')
         ->and(array_filter($says, static fn (string $line): bool => str_contains($line, 'left as')))->toBe([]);
 
     expect(temecms_site_seed(['words'], $this->admin->id, $this->state))->toBe([])
         ->and(($this->seed)(TEMECMS_SITE_ALL))->toBe([]);
 })->skip(fn (): bool => temecmsSiteTheme() === null, 'needs TEMECMS_THEME, a copy of the TemeCMS theme');
 
-it('leaves a passage a person edited, and an item with a draft waiting alone, and says so', function (): void {
+it('leaves a passage a person edited, an item with a draft waiting and a byline someone set, and says so', function (): void {
     temecmsSiteTypes($this, $this->admin);
     $this->theme(temecmsSiteTheme())->activate();
     ($this->seed)(array_diff(TEMECMS_SITE_ALL, ['words']));
     $state = json_decode((string) file_get_contents($this->state), true);
     temecmsSiteAge($this);
     $aid = (string) $this->admin->id;
+    $editor = $this->person('editor');
 
     $faq = Content::query()->findOrFail($state['content']['page:faq']);
     $roadmap = Content::query()->findOrFail($state['content']['page:roadmap']);
     $post = Content::query()->findOrFail($state['content']['post:release-0-7-0-alpha-1']);
-    (new Acting)->as($this->admin, function () use ($faq, $roadmap, $aid): void {
+    (new Acting)->as($this->admin, function () use ($faq, $roadmap, $post, $aid, $editor): void {
         // The first answer rewritten by a person; the rest of the FAQ is as the older seed left it.
         $document = $faq->publishedRevision->document;
         foreach ($document['content'] as $i => $block) {
@@ -299,6 +312,8 @@ it('leaves a passage a person edited, and an item with a draft waiting alone, an
         app(PublishRevision::class)->execute(new PublishRevisionInput($faq->id, (string) $faq->working_revision_id, $aid));
         // A draft waiting on the roadmap, not published.
         app(SaveDraft::class)->execute(new SaveDraftInput($roadmap->id, (string) $roadmap->publishedRevision->title, $roadmap->publishedRevision->document, (array) $roadmap->publishedRevision->fields, (string) $roadmap->working_revision_id, $aid));
+        // A byline a person chose.
+        app(SetBylines::class)->execute(new SetBylinesInput($aid, (string) $post->id, ['user:'.$editor->id]));
     }, 'Editing the site');
 
     $says = [];
@@ -312,5 +327,6 @@ it('leaves a passage a person edited, and an item with a draft waiting alone, an
         ->and($said)->toContain('words page:faq: the text has changed, so "Not yet. Teme is in alpha')
         ->and(temecmsSiteBody($roadmap))->toContain('Alpha · 0.7.0-alpha.1')
         ->and($said)->toContain('words page:roadmap: a draft is waiting')
+        ->and(app(Credits::class)->shown([(string) $post->id])[(string) $post->id][0]->id)->toBe((string) $editor->id)
         ->and(temecmsSiteBody($post))->toContain('The full notes are under');
 })->skip(fn (): bool => temecmsSiteTheme() === null, 'needs TEMECMS_THEME, a copy of the TemeCMS theme');

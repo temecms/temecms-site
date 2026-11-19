@@ -39,6 +39,13 @@ use App\Domain\Menus\Operations\Input\BindNavigationSlotInput;
 use App\Domain\Menus\Operations\Input\CreateNavigationInput;
 use App\Domain\Menus\Operations\Input\SaveNavigationItemsInput;
 use App\Domain\Menus\Operations\SaveNavigationItems;
+use App\Domain\People\Credit;
+use App\Domain\People\Credits;
+use App\Domain\People\Operations\CreatePerson;
+use App\Domain\People\Operations\Input\CreatePersonInput;
+use App\Domain\People\Operations\Input\SetBylinesInput;
+use App\Domain\People\Operations\SetBylines;
+use App\Domain\People\Queries\People;
 use App\Domain\Regions\Operations\CreateRegion;
 use App\Domain\Regions\Operations\Input\CreateRegionInput;
 use App\Domain\Settings\Models\SettingsGroupRecord;
@@ -53,6 +60,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Teme\Contracts\Settings\SettingsReader;
 
@@ -236,6 +244,23 @@ if (! function_exists('temecms_site_seed')) {
         }
 
         // ---------------------------------------------------------------- content
+        /*
+         * Credits an item to a person with no account, made when the site has none of that name, but only while the
+         * item credits just its owner, as every item does until someone sets its bylines. Returns whether it changed.
+         */
+        $creditTo = static function (Content $item, string $name) use ($as, $aid): bool {
+            $shown = app(Credits::class)->shown([(string) $item->id])[(string) $item->id] ?? [];
+            if (count($shown) !== 1 || $shown[0]->kind !== Credit::ACCOUNT || $shown[0]->id !== (string) $item->author_id) {
+                return false;
+            }
+            $person = DB::table('people')->where('name', $name)->whereNull('user_id')->value('id');
+            if ($person === null) {
+                $person = $as(fn () => app(CreatePerson::class)->execute(new CreatePersonInput($aid, $name)), "Adding the person $name");
+            }
+            $as(fn () => app(SetBylines::class)->execute(new SetBylinesInput($aid, (string) $item->id, [Credit::person((string) $person)->key()])), "Crediting {$item->title} to $name");
+
+            return true;
+        };
         $fieldKeys = static function (string $type): array {
             $map = [];
             foreach (app(FieldRegistry::class)->forType($type) as $f) {
@@ -356,6 +381,10 @@ if (! function_exists('temecms_site_seed')) {
                 }
                 $count('published');
                 $say("published $sid");
+                if (isset($it['byline']) && $creditTo($c->refresh(), $it['byline'])) {
+                    $count('bylines');
+                    $say("$sid credits {$it['byline']}");
+                }
             }
         }
 
@@ -569,6 +598,10 @@ if (! function_exists('temecms_site_seed')) {
                     $as(fn () => app(PublishRevision::class)->execute(new PublishRevisionInput($c->id, (string) $c->working_revision_id, $aid)), "Publishing the words of {$w['ref']}");
                     $count('words');
                     $say("words {$w['ref']}: ".$changed.' changed');
+                }
+                if (isset($w['byline']) && $creditTo($c->refresh(), $w['byline'])) {
+                    $count('bylines');
+                    $say("words {$w['ref']}: credits {$w['byline']}");
                 }
                 $skipped += $kept;
             }

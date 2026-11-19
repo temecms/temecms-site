@@ -12,7 +12,8 @@ export const plain = (n) => {
     return children.every((c) => c.type === 'text') ? children.map(plain).join('') : children.map(plain).join(' ');
 };
 
-const BYLINES = {};
+// Items whose sign-off the step also fixes: the person they should credit, when they credit only their owner's account.
+const BYLINES = { 'post:release-0-7-0-alpha-1': 'The Teme team' };
 
 if (process.argv[1] === import.meta.filename) {
     const dir = import.meta.dirname;
