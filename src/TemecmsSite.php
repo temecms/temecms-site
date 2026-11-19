@@ -2,8 +2,8 @@
 
 /**
  * The temecms-site plugin's own class. The site's content types, fields and
- * taxonomies come from types/teme-types.json, which teme-plugin.json names,
- * so there is nothing to subscribe to yet.
+ * taxonomies come from types/teme-types.json, and the Submit form's route
+ * and setting from teme-plugin.json, so there is nothing to subscribe to yet.
  *
  * @package TemecmsSite
  * @since   1.0.0
