@@ -8,6 +8,9 @@
  *
  *   SEED_ADMIN_ID=1 php /path/to/temecms-site/seed/seed.php media theme content regions menus settings addresses activate
  *
+ * A site an older seed filled takes one more step, `words`, which rewrites the passages that went out of
+ * date where they still read as the older seed wrote them (see the README, "Moving an existing site").
+ *
  * A plugin can't add an artisan command (Teme leaves a plugin's Laravel providers out), so this is a script
  * that boots Teme as artisan does. SEED_ADMIN_ID names the administrator the content is made as; it
  * defaults to 1. The steps run in the order above, whatever order they are named in, and need nothing

@@ -1715,7 +1715,7 @@
       "content": [
        {
         "type": "text",
-        "text": "A preview until Teme 1.0: each change is named in the changelog."
+        "text": "Each change to it is named in the changelog."
        }
       ]
      },
@@ -1762,7 +1762,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Each task goes in the smallest place that fits it. Small ones are data that Teme draws, so they look native; larger ones are the plugin’s own screens inside Teme’s frame. Today a plugin adds settings, Tools links and status banners; the rest arrive with the next releases of the plugin API."
+        "text": "Each task goes in the smallest place that fits it. Small ones are data that Teme draws, so they look native; larger ones are the plugin’s own screens inside Teme’s frame. A plugin can have its own area in the admin, with pages, tables, record forms, charts and actions, add panels to the editor and columns to the content lists, and keep its own settings."
        }
       ]
      },
@@ -2500,7 +2500,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Teme has a read-only API, off until you turn it on, for sites and apps that read your content. Writing through an API is not built."
+        "text": "Teme has a read-only API, off until you turn it on, for sites and apps that read your content. A management API lets outside tools sign in with a key to upload media and create, publish and schedule content, each key acting as one person with only the abilities it is given."
        }
       ]
      },
@@ -2521,7 +2521,7 @@
       "content": [
        {
         "type": "text",
-        "text": "The foundation is built: every item has a language, and translations are linked. The screens to manage languages come in a later release."
+        "text": "Yes. Every item has a language and translations are linked. Settings › Languages sets the site’s languages, the editor’s Translations section links an item’s versions, and readers get each page in its language."
        }
       ]
      },
@@ -2875,6 +2875,29 @@
           ]
          }
         ]
+       },
+       {
+        "type": "listItem",
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "Teme 1.2",
+            "marks": [
+             {
+              "type": "bold"
+             }
+            ]
+           },
+           {
+            "type": "text",
+            "text": " The admin drawn again in one look, from the editor and Settings to People, Tools and the content screens; plugins that bring their own content types, taxonomies and fields; and themes that read the running Teme version."
+           }
+          ]
+         }
+        ]
        }
       ]
      },
@@ -2898,13 +2921,36 @@
       "content": [
        {
         "type": "text",
-        "text": "Stage 2: the fixes, while the foundations stand still."
+        "text": "The directory, then the fixes found along the way."
        }
       ]
      },
      {
       "type": "bulletList",
       "content": [
+       {
+        "type": "listItem",
+        "content": [
+         {
+          "type": "paragraph",
+          "content": [
+           {
+            "type": "text",
+            "text": "The directory",
+            "marks": [
+             {
+              "type": "bold"
+             }
+            ]
+           },
+           {
+            "type": "text",
+            "text": " A place to find plugins and themes, open to other publishers: each release signed and listed in an index that every Teme site reads, with a form to submit one."
+           }
+          ]
+         }
+        ]
+       },
        {
         "type": "listItem",
         "content": [
@@ -3021,29 +3067,6 @@
            {
             "type": "text",
             "text": " The plugin API’s next waves, more first-party plugins, and a second theme."
-           }
-          ]
-         }
-        ]
-       },
-       {
-        "type": "listItem",
-        "content": [
-         {
-          "type": "paragraph",
-          "content": [
-           {
-            "type": "text",
-            "text": "Installing and listing",
-            "marks": [
-             {
-              "type": "bold"
-             }
-            ]
-           },
-           {
-            "type": "text",
-            "text": " An installer in the browser, signed releases, and a plugin repository."
            }
           ]
          }
@@ -3431,6 +3454,7 @@
    "excerpt": "An item can now credit several people, in order, and a person needn’t have an account. With this release the foundations of every area are in place.",
    "publishedAt": "2026-11-13T09:00:00Z",
    "category": "Release notes",
+   "byline": "The Teme team",
    "body": {
     "type": "doc",
     "content": [
@@ -4589,7 +4613,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4618,7 +4642,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4647,7 +4671,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4676,7 +4700,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4705,7 +4729,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4734,7 +4758,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4763,7 +4787,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4792,7 +4816,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4821,7 +4845,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4850,7 +4874,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4879,7 +4903,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4908,7 +4932,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4937,7 +4961,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4966,7 +4990,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -4995,7 +5019,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -6229,7 +6253,7 @@
    "fields": {
     "guide": "operators",
     "group": "Install",
-    "proof": "tests",
+    "proof": "",
     "order": 2,
     "soon": true,
     "written_for": ""
@@ -6242,7 +6266,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -6258,7 +6282,7 @@
    "fields": {
     "guide": "operators",
     "group": "Install",
-    "proof": "tests",
+    "proof": "",
     "order": 3,
     "soon": true,
     "written_for": ""
@@ -6271,7 +6295,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -6287,7 +6311,7 @@
    "fields": {
     "guide": "operators",
     "group": "Install",
-    "proof": "none",
+    "proof": "",
     "order": 4,
     "soon": true,
     "written_for": ""
@@ -6300,7 +6324,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7263,7 +7287,7 @@
    "fields": {
     "guide": "operators",
     "group": "HTTPS and platforms",
-    "proof": "none",
+    "proof": "",
     "order": 6,
     "soon": true,
     "written_for": ""
@@ -7276,7 +7300,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7292,7 +7316,7 @@
    "fields": {
     "guide": "operators",
     "group": "HTTPS and platforms",
-    "proof": "dokploy",
+    "proof": "",
     "order": 7,
     "soon": true,
     "written_for": ""
@@ -7305,7 +7329,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7321,7 +7345,7 @@
    "fields": {
     "guide": "operators",
     "group": "HTTPS and platforms",
-    "proof": "none",
+    "proof": "",
     "order": 8,
     "soon": true,
     "written_for": ""
@@ -7334,7 +7358,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7350,7 +7374,7 @@
    "fields": {
     "guide": "operators",
     "group": "HTTPS and platforms",
-    "proof": "none",
+    "proof": "",
     "order": 9,
     "soon": true,
     "written_for": ""
@@ -7363,7 +7387,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7379,7 +7403,7 @@
    "fields": {
     "guide": "operators",
     "group": "Keep it safe and current",
-    "proof": "tests",
+    "proof": "",
     "order": 10,
     "soon": true,
     "written_for": ""
@@ -7392,7 +7416,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7408,7 +7432,7 @@
    "fields": {
     "guide": "operators",
     "group": "Keep it safe and current",
-    "proof": "none",
+    "proof": "",
     "order": 11,
     "soon": true,
     "written_for": ""
@@ -7421,7 +7445,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7437,7 +7461,7 @@
    "fields": {
     "guide": "operators",
     "group": "Keep it safe and current",
-    "proof": "none",
+    "proof": "",
     "order": 12,
     "soon": true,
     "written_for": ""
@@ -7450,7 +7474,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7466,7 +7490,7 @@
    "fields": {
     "guide": "operators",
     "group": "Keep it safe and current",
-    "proof": "tests",
+    "proof": "",
     "order": 13,
     "soon": true,
     "written_for": ""
@@ -7479,7 +7503,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7495,7 +7519,7 @@
    "fields": {
     "guide": "operators",
     "group": "Keep it safe and current",
-    "proof": "none",
+    "proof": "",
     "order": 14,
     "soon": true,
     "written_for": ""
@@ -7508,7 +7532,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7537,7 +7561,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7566,7 +7590,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7595,7 +7619,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7624,7 +7648,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7653,7 +7677,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7682,7 +7706,7 @@
       "content": [
        {
         "type": "text",
-        "text": "This guide is written in the repository. Its page is not drawn yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7711,7 +7735,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7740,7 +7764,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7769,7 +7793,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7798,7 +7822,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7827,7 +7851,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -7856,7 +7880,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Not written yet."
+        "text": "This guide is being written."
        }
       ]
      }
@@ -8290,7 +8314,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API."
+        "text": "Settings pages, Status banners and the editor are places a plugin can appear."
        }
       ]
      },
@@ -8993,7 +9017,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API."
+        "text": "Settings pages, Status banners and the editor are places a plugin can appear."
        }
       ]
      },
@@ -9624,7 +9648,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API."
+        "text": "Settings pages, Status banners and the editor are places a plugin can appear."
        }
       ]
      },
@@ -10350,7 +10374,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API."
+        "text": "Settings pages, Status banners and the editor are places a plugin can appear."
        }
       ]
      },
@@ -10981,7 +11005,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API."
+        "text": "Settings pages, Status banners and the editor are places a plugin can appear."
        }
       ]
      },
@@ -11612,7 +11636,7 @@
       "content": [
        {
         "type": "text",
-        "text": "Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API."
+        "text": "Settings pages, Status banners and the editor are places a plugin can appear."
        }
       ]
      },

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1
+
+- The seed's words are up to date for Teme 1.2: the FAQ says Teme can be used now and that it has a management API and languages, the Roadmap lists Teme 1.0, 1.1 and 1.2 as built with the directory next, and the Moving from WordPress, Developers, Plugins, Themes and Docs pages and the 0.7.0-alpha.1 notes no longer call Teme an alpha or installing from the admin planned.
+- A guide the docs home lists that isn't written yet says "This guide is being written." on its page, where it said "Its page is not drawn yet." or "Not written yet.", and carries no proof mark. The pages stay, because the docs home draws its list of guides from them. The `words` step does the same on a site that already has them.
+- The 0.7.0-alpha.1 notes are credited to "The Teme team", a person with no account, where they showed the administrator's own name. The `words` step does the same on a site that already has the post, only while it credits just its owner.
+- A new seed step, `words`, brings those passages up to date on a site an older seed filled, only where the item still holds the older seed's text exactly, and says what it changed and what it left. See the README's "Moving an existing site".
+
 ## 1.1.0
 
 The free directory's content on temecms.com.

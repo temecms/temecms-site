@@ -136,6 +136,7 @@ The steps run in this order, whatever order you name them in:
 | `settings` | Sets the site's title and tagline |
 | `addresses` | Puts the theme directory's archive at `/theme-directory/` (core serves theme assets from `/themes/`) |
 | `activate` | Makes the home page the front page and the blog page the posts page |
+| `words` | Brings an older seed's out-of-date passages up to date on a site that already holds them: see [Moving an existing site](#moving-an-existing-site). Never part of a first load |
 
 `theme`, `settings`, `addresses` and `activate` change the site's theme, title, addresses and front page, so run them only on a site meant for this content. Leave a step out to skip it. `content`, `regions` and `menus` stop at once, changing nothing, when the plugin's types and fields are missing.
 
@@ -159,7 +160,18 @@ temecms.com already has the types `doc`, `plugin` and `theme`, made by the TemeC
 
    Check: the theme names 0.2.0 and is still the active theme. The documentation pages show a version label: the running release (1.2.0) when the theme's Documentation version label setting is empty, or what that setting says. If you set it to 0.7 once, clear it under Site › Themes. The home page, a blog post and the plugin and theme directories look as they did.
 
-Don't run the seed on this site. If you ever do, name only the steps you need: published items, regions and menus are left alone unless named in `SEED_FORCE`.
+4. **Bring the old words up to date.** The seed has changed since the pages were written: they still call Teme an alpha, say Version 1.0 and installing from the admin are still to come, and list guides with "Its page is not drawn yet." The `words` step rewrites those passages, and nothing else, through Teme's Operations. From the web container, as in the steps above:
+
+   ```bash
+   cd /var/www/html
+   SEED_ADMIN_ID=1 php /var/teme/extensions/current/vendor/temecms/temecms-site/seed/seed.php words
+   ```
+
+   It changes a passage only where the item still holds the older seed's text exactly. A passage someone has edited, and an item with a draft waiting, are left as they are and named, so a person's edit is never written over. It also gives the 0.7.0-alpha.1 post's byline to "The Teme team", a person with no account, only while the post credits just its owner. It lists each item it changed and each passage it left, and ends with what it changed, such as "Made or changed: words 20, bylines 1." Run again, it changes nothing: a passage already as it is now is passed over, and it ends with "Nothing to change". Each guide the docs home lists that isn't written yet now says "This guide is being written." and carries no proof mark; its page, address and place in the menus are as they were.
+
+   Check: `/faq/` answers "Can I use it now?" with Yes, `/roadmap/` lists Teme 1.2 as built and the directory as next, `/moving-from-wordpress/`, `/plugins/` and `/theme-directory/` no longer say alpha or planned for what exists, a guide such as `/docs/configuring-teme/` says "This guide is being written." and the 0.7.0-alpha.1 post is signed "The Teme team".
+
+Don't run any other step on this site. If you ever do, name only the steps you need: published items, regions and menus are left alone unless named in `SEED_FORCE`.
 
 ## Working on the plugin
 
@@ -170,6 +182,12 @@ node seed/build-content.mjs        # seed/content/*.mjs -> seed/content.json
 ```
 
 Where a sentence should name the Teme release the site runs, write `{{release}}`; the seed writes the running release in its place.
+
+When you rewrite a passage that a live site already holds, the `words` step must carry the rewrite to it: `seed/words.json` lists each passage as the older seed wrote it beside what the seed writes now, and it is made, after `build-content.mjs`, from the older seed's `content.json`:
+
+```bash
+node seed/build-words.mjs path/to/older/content.json   # -> seed/words.json
+```
 
 The seed's steps are one function, `temecms_site_seed()`, in `seed/steps.php`; `seed/seed.php` boots Teme and calls it. It runs on Teme's production image, which is installed without Composer's dev packages, so it must not use Teme's testing kit (`Teme\Testing`) or anything from PHPUnit. It acts as the administrator `SEED_ADMIN_ID` the way the admin's own requests do: that user signed in, with core's `SessionElevation` over a request whose session holds a password confirmed now. Every step must be repeatable, and a second run must change nothing: look for what exists (by slug, by title, by the state file, or by the setting's current value) before writing.
 

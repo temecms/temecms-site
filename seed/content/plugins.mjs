@@ -79,7 +79,7 @@ export default PLUGINS.map((pl) => {
                 kicker('02 · In the admin'),
                 h2('Where it appears'),
                 ul(...pl.where.map((w) => [b(w[0] + '.'), ' ' + w[1]])),
-                p('Settings and Status banners are built today; sections in the editor are designed and arrive with the next releases of the plugin API.'),
+                p('Settings pages, Status banners and the editor are places a plugin can appear.'),
                 image('plugin-row', { alt: `The ${pl.name} plugin in the Plugins page of the admin, drawn for the example once it is enabled: its name, its switch and the links it added.`, caption: 'In Site › Plugins, enabled. Drawn for the example.' }),
                 hr(),
 
