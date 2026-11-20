@@ -6,7 +6,7 @@
     "description": "The content of temecms.com: the Documentation, Plugin directory, Theme directory and Showcase types with their fields, the directory's Submit form, and a script that loads the site's starting content.",
     "version": "1.1.0",
     "requires": {
-        "teme": "^1.2"
+        "teme": "^1.3"
     },
     "plugin": "Temecms\\Site\\TemecmsSite",
     "capabilities": [
