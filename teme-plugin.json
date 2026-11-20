@@ -3,16 +3,77 @@
     "name": "temecms/temecms-site",
     "code": "temecms-site",
     "label": "TemeCMS site",
-    "description": "The content of temecms.com: the Documentation, Plugin directory and Theme directory types with their fields, and a script that loads the site's starting content.",
-    "version": "1.0.0",
+    "description": "The content of temecms.com: the Documentation, Plugin directory, Theme directory and Showcase types with their fields, the directory's Submit form, and a script that loads the site's starting content.",
+    "version": "1.1.0",
     "requires": {
-        "teme": "^1.2"
+        "teme": "^1.3"
     },
     "plugin": "Temecms\\Site\\TemecmsSite",
+    "capabilities": [
+        "content.read",
+        "content.write",
+        "media.write",
+        "content.submissions",
+        "directory.read",
+        "http",
+        "jobs",
+        "routes.public"
+    ],
+    "hosts": [
+        "api.github.com",
+        "temecms.github.io"
+    ],
+    "jobs": [
+        {
+            "key": "directory-sync",
+            "label": "Directory sync",
+            "long": true
+        }
+    ],
+    "schedules": [
+        {
+            "job": "directory-sync",
+            "every": "hour"
+        }
+    ],
+    "routes": [
+        {
+            "id": "submit-package",
+            "method": "POST",
+            "path": "/{code}/submit-package",
+            "handler": "Temecms\\Site\\Submit\\SubmitPackage",
+            "verify": {
+                "kind": "custom",
+                "class": "Temecms\\Site\\Submit\\FormPost"
+            },
+            "maxBody": 8192,
+            "throttle": 5
+        },
+        {
+            "id": "submit-site",
+            "method": "POST",
+            "path": "/{code}/submit-site",
+            "handler": "Temecms\\Site\\Submit\\SubmitSite",
+            "verify": {
+                "kind": "custom",
+                "class": "Temecms\\Site\\Submit\\FormPost"
+            },
+            "maxBody": 8192,
+            "throttle": 5
+        }
+    ],
     "license": "MIT",
     "author": "TemeCMS",
     "homepage": "https://github.com/temecms/temecms-site",
     "contributes": {
-        "types": "types/teme-types.json"
+        "types": "types/teme-types.json",
+        "settings": [
+            {
+                "key": "github_token",
+                "type": "secret",
+                "label": "GitHub token for the Submit form",
+                "description": "A fine-grained token that may open pull requests on temecms/directory. Without it, the Submit form takes no packages."
+            }
+        ]
     }
 }

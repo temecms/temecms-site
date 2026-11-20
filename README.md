@@ -2,7 +2,8 @@
 
 The site plugin of [temecms.com](https://temecms.com), the TemeCMS project's own website. It holds what the site is, apart from how it looks:
 
-- the content types **Documentation** (singular Guide), **Plugin directory** (singular Plugin listing) and **Theme directory** (singular Theme listing), with their fields, and the page fields Kicker and Words to set in italics in the title;
+- the content types **Documentation** (singular Guide), **Plugin directory** (singular Plugin listing), **Theme directory** (singular Theme listing) and **Showcase** (singular Showcase site), with their fields, the taxonomy **Directory categories**, and the page fields Kicker and Words to set in italics in the title;
+- the directory's **Submit forms**, for plugins and themes and for the Showcase, and the **directory sync** that fills the listings from the directory's index;
 - the site's starting content: pages, posts, guides, plugin and theme listings, product pictures, the theme's regions, menus and settings, and the script that loads it.
 
 The looks are the TemeCMS theme, [`temecms/theme-temecms`](https://github.com/temecms/theme-temecms). Keeping the two apart means switching themes never makes content disappear.
@@ -25,6 +26,11 @@ The looks are the TemeCMS theme, [`temecms/theme-temecms`](https://github.com/te
 | Documentation (Guide) | `doc` | `/docs/{slug}/` | `/admin/doc-pages` |
 | Plugin directory (Plugin listing) | `plugin` | `/plugins/{slug}/` | `/admin/plugin-pages` |
 | Theme directory (Theme listing) | `theme` | `/theme-directory/{slug}/` | `/admin/theme-pages` |
+| Showcase (Showcase site) | `showcase` | `/showcase/{slug}/` | `/admin/showcase-pages` |
+
+Plugin and theme listings carry the directory's facts as fields: `package` (the Composer name, which the sync finds a listing by), `summary`, `icon_image`, `categories`, `picked`, `author_name`, `author_github`, `latest_version`, `works_with`, `updated_on`, `listed_on`, `link_source`, `link_issues`, `link_docs`, `link_support`, `stars`, `open_issues` and `changelog` (Markdown). `releases`, `capabilities` and `screenshots` hold JSON lists: `[{version, date, works_with, held}]` newest first, `[{key, words}]` and `[{media, caption}]`. `directory_sync` is the sync's own record; leave it as it is. The README is the listing's body. Both types take terms from **Directory categories** (`directory_category`), the first one the listing's main category.
+
+A Showcase site's title is the site's name; its fields are `site_address`, `site_kind` (news, blog, documentation, magazine or other), `screenshot`, `theme_item` and `plugin_item_1` to `plugin_item_8` (links to the listings it runs), `owner_line` and `approved`. Publish only approved sites.
 
 While the plugin is enabled, these types, their fields and taxonomies work like any other and are marked as the plugin's. A type the site already has with the same key is taken over when the plugin is enabled, with all its content. Disabled, its types leave the menu and the public site, and their items are kept. Teme refuses to uninstall it while those types hold items.
 
@@ -49,6 +55,47 @@ php artisan teme:plugins:enable temecms/temecms-site --agree
 ```
 
 To work on a local copy instead, add the plugin's folder, as an absolute path, to `TEME_PLUGIN_PATHS` in the Teme install's `.env`.
+
+## The directory
+
+### The Submit form for plugins and themes
+
+The theme's Submit page posts its form to `/temecms-site/submit-package`, form-encoded, with the fields `repository` (a `https://github.com/owner/repo` address), `kind` (`plugin` or `theme`), `category` (a category key), `contact` (an email address) and `agree`, and a field `website` that people never see and must stay empty.
+
+- **With a GitHub token saved**, the plugin reads the package's name from the repository's `composer.json` and opens a pull request on [`temecms/directory`](https://github.com/temecms/directory) adding `listings/<vendor>/<name>.json`.
+- **Without one**, it stores the package as a submission waiting for review: a plugin or theme listing named after the repository, with its source link and category, for a person to add to the directory by hand.
+
+The contact address goes into no pull request, no field and nothing public; only the person reviewing a stored submission sees it.
+
+It answers with a redirect back to the page the form was on (`/submit/` when the browser doesn't say), saying what happened in the query: `?submitted=pull-request&number=N`, `?submitted=by-hand`, or `?error=` and one of `repository`, `kind`, `category`, `contact`, `agree`, `listed` (already in the directory), `github` (GitHub refused) or `unavailable` (the submission couldn't be stored). One address may post five times a minute.
+
+To let it open pull requests, save a fine-grained GitHub token, allowed to write contents and pull requests on `temecms/directory` only, under Site › Plugins › TemeCMS site › **GitHub token for the Submit form**.
+
+### The Showcase form
+
+The Showcase page posts its form to `/temecms-site/submit-site`, form-encoded, with `name`, `address` (the site's https or http address), `kind` (`news`, `blog`, `documentation`, `magazine` or `other`), `screenshot` (an optional address of a picture), `theme`, `plugins`, `line` (a short line from the site's owner), `contact` (an email address) and the empty `website`. The site is stored as a Showcase site waiting for review, with Approved unticked. The screenshot's address and the theme and plugins as the visitor named them go in its body for the person who reviews it, who sets the picture, links the listings, ticks Approved and publishes it. The contact address is seen only by that person.
+
+It answers like the plugin form: `?submitted=showcase`, or `?error=` and one of `address`, `kind`, `screenshot`, `contact` or `unavailable`. One address may post five times a minute.
+
+### The directory sync
+
+The job **Directory sync** runs every hour. It reads the directory's index as Teme last verified it, and each package's detail file through the same check, and makes the listings match:
+
+- one published listing per package, found again by its package name;
+- the README converted from Markdown (safe mode: raw HTML dropped, unsafe links emptied) into an editor document by Teme's own converter; the changelog kept;
+- the icon and screenshots copied into Media, each picture once;
+- nothing written when a package hasn't changed;
+- a listing whose package has left the index taken back to a draft, never deleted; it is published again if the package comes back.
+
+When Teme has no verified index (the directory is switched off, its key is missing, or the index has expired), the run fails and changes nothing. A package whose detail file can't be read this time keeps its listing as it is. Listings made by hand, without the sync's record, are left alone. The run's message under Tools › Jobs says what it did.
+
+To run it once by hand, for example right after enabling the plugin, queue the due schedules from the Teme install's folder:
+
+```bash
+php artisan teme:plugins:run-due-schedules --plugin=temecms-site
+```
+
+A schedule that has never run is due at once; after that, the command queues it again only once the hour has passed. The queue worker then runs it.
 
 ## Load the starting content
 
@@ -136,7 +183,7 @@ The tests use Teme's testing kit, which a development install has. From the Teme
 TEMECMS_THEME=/path/to/temecms php artisan test /path/to/temecms-site/tests
 ```
 
-They check the manifest and the types file against Teme's own rules, and run the seed's steps on a test site: what each step makes, that a second run changes nothing, and that it leaves a site's own content alone. `TEMECMS_THEME` names a copy of the TemeCMS theme, in a folder named `temecms`; without it the tests that need the theme are skipped.
+They check the manifest and the types file against Teme's own rules, run the directory sync and the Submit forms on a test site (they need a Teme that offers the directory's doors, and are skipped without it), and run the seed's steps on a test site: what each step makes, that a second run changes nothing, and that it leaves a site's own content alone. `TEMECMS_THEME` names a copy of the TemeCMS theme, in a folder named `temecms`; without it the tests that need the theme are skipped.
 
 ## Licence
 

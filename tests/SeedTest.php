@@ -154,7 +154,7 @@ it('takes over the types the old theme seed made, renaming them and keeping thei
         ->and(app(FieldRegistry::class)->find('01JQ0TEMECMSSXTE0QDGR0VP00')?->handle)->toBe('group')
         ->and(Content::query()->findOrFail($guide->id)->workingRevision->fields)->toMatchArray(['01JQ0TEMECMSSXTE0QDGR0VP00' => 'Install'])
         ->and($this->fetch($guide->url)->status())->toBe(200);
-})->skip(fn (): bool => ! temecmsSiteSocket(), 'needs the plugin types socket (Teme 1.2), which reads contributes.types');
+})->skip(fn (): bool => ! temecmsSiteSocket(), 'needs a Teme that reads contributes.types and offers the directory’s doors');
 
 it('runs as a script from the Teme install’s folder, and exits non-zero with the reason it stopped', function (): void {
     $script = temecmsSiteRoot().'/seed/seed.php';
