@@ -4,7 +4,7 @@
     "description": "The temecms.com site plugin: the Documentation, Plugin directory, Theme directory and Showcase content types, the directory's Submit form, and the site's starting content.",
     "keywords": ["teme", "temecms"],
     "license": "MIT",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "require": {
         "php": "^8.4",
         "teme/contracts": "^1.3",
